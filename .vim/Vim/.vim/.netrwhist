@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/Users/daze/Dropbox/Workspace/Flask/one/static'
+let g:netrw_dirhist_2='/Users/daze/Dropbox/IndustryAndResearch/Research/MultiagentResearch/MPF-BW-Combined/BW-Ver-2'
+let g:netrw_dirhist_3='/Users/daze/Dropbox/IndustryAndResearch/Research/MultiagentResearch/MPF-BW-Combined'
+let g:netrw_dirhist_4='/Users/daze/Dropbox/IndustryAndResearch/Research/MultiagentResearch/MPF-BW-Combined/BW-Ver-2'
+let g:netrw_dirhist_5='/Users/daze/Dropbox/Workspace/Flask/one'
+let g:netrw_dirhist_6='/Users/daze/Dropbox/IndustryAndResearch/Research/MultiagentResearch/MPF-BW-Combined'

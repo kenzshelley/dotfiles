@@ -1,6 +1,5 @@
 " kenzshelley vimrc -- 12/27/14
 " Mostly stolen from David Zhang
-
 set nocompatible  " VUNDLE be iMproved, required
 filetype off       " VUNDLE required
 
@@ -49,7 +48,7 @@ execute pathogen#infect()
 
 "Color scheme
 syntax enable
-colorscheme solarized
+"colorscheme solarized
 set background=dark
 syntax on "if you alter these, source $MYVIMRC may not be enough to see changes
 "syntax enable "Enable highlighting. No need since we have color scheme...

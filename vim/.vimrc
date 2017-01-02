@@ -9,8 +9,8 @@ call vundle#begin()
 " alternatively, pass a path where Vundle should install plugins
 "call vundle#begin('~/come/path/here')
 
-" let Vundle manage Vundle, required 
-Plugin 'gmarik/Vundle.vim' 
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
 
 Plugin 'kien/ctrlp.vim'
 
@@ -136,19 +136,6 @@ nnoremap <S-q> :q<CR>
 "Z for fancy Ex-mode (not vi) normally reached by gQ. Use :vi to exit.
 nnoremap <S-z> Q
 
-"Tab/Buffer shortcuts
-nnoremap <leader>t :tabnew<CR>
-nnoremap <leader>e :tabnew<CR>:E<CR>
-nnoremap <leader>w :bw<CR>
-"nnoremap <leader>l :ls<CR>
-nnoremap <leader>n :bn<CR>
-nnoremap <leader>p :bp<CR>
-ca te tabedit
-ca tm tabmove
-
-"Switch tabs quickly
-noremap gr gT
-
 "Paste using the indentation of the current line
 noremap p ]p
 noremap P [p
@@ -163,11 +150,6 @@ noremap P [p
 inoremap {<CR> {<CR>}<C-o>O
 
 "FUNCTION KEY REMAPPING
-
-"Toggle display of line numbers
-noremap <F11> :set number!<CR>
-inoremap <F11> <C-o>:set number!<CR>
-nnoremap <leader>l :set number!<CR>
 
 "Toggle display of unprintable characters
 noremap <F12> :set list!<CR>
@@ -187,31 +169,10 @@ nnoremap <right> >>
 "Y yanks to the end of the line, rather than the whole line (which yy does)
 noremap Y y$
 
-" Move current tab into the specified direction.
-"
-" @param direction -1 for left, 1 for right.
-function! TabMove(direction)
-  " get number of tab pages.
-  let ntp=tabpagenr("$")
-  " move tab, if necessary.
-  if ntp > 1
-    " get number of current tab page.
-    let ctpn=tabpagenr()
-    " move left.
-    if a:direction < 0
-      let index=((ctpn-1+ntp-1)%ntp)
-    else
-      let index=(ctpn%ntp)
-    endif
-    " move tab page.
-    execute "tabmove ".index
-  endif
-endfunction
-
 "Comment toggling: http://goo.gl/oaGHNo
 "Allows you to select something in visual mode, and then comment it (either at
 "the start or at the indentation level)
-"David is da bomb.com basically 
+"David is da bomb.com basically
 vnoremap , :call ToggleCommentAtLineStart()<CR>
 vnoremap . :call ToggleCommentAtIndentationLevel()<CR>
 function! GetCommentString()

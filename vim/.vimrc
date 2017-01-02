@@ -1,7 +1,7 @@
 " kenzshelley vimrc -- 12/27/14
 " Mostly stolen from David Zhang
 set nocompatible  " VUNDLE be iMproved, required
-filetype off       " VUNDLE required
+filetype off      " VUNDLE required
 
 " set the runtime path to include Vuncle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -12,41 +12,32 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
-Plugin 'kien/ctrlp.vim'
-
+Plugin 'airblade/vim-gitgutter'
 Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'kien/ctrlp.vim'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'pangloss/vim-javascript'
+Plugin 'Raimondi/delimitMate'
+Plugin 'rking/ag.vim'
 Plugin 'sjl/gundo.vim'
 nnoremap <C-z> :GundoToggle<CR>
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-sensible'
+Plugin 'tpope/vim-repeat'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 
+" Airline config
+let g:airline_theme='bubblegum'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just
-" :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to
-" auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line ""
 
 execute pathogen#infect()
 
 "Color scheme
 syntax enable
-"colorscheme solarized
 set background=dark
 syntax on "if you alter these, source $MYVIMRC may not be enough to see changes
 "syntax enable "Enable highlighting. No need since we have color scheme...
@@ -123,6 +114,7 @@ filetype on
 "------------------End set statements. Begin remapping.-------------------------
 
 let mapleader = '\'
+:imap jk <Esc>
 
 "Always move up or down on the screen (makes moving up or down on long, broken
 "lines, like this one, more intuitive
@@ -216,4 +208,3 @@ endfunction
 "In Normal mode, semicolon brings up colon prompt
 cnoremap ; :
 nnoremap ; :
-Plugin 'rking/ag.vim'

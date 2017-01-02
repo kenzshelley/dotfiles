@@ -1,3 +1,14 @@
+# General
+export EDITOR='vim'
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+
+bindkey -e
+
+autoload -U compinit && compinit
+zmodload -i zsh/complist
+
 # Custom Powerline Settings
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir custom_git_branch)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=()
@@ -56,11 +67,6 @@ alias gfppr='pr_warning && git push -f origin head:$(git branch | grep \* | cut 
 alias gfp='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c3-)'
 alias gp='pr_warning && git push origin head:$(git branch | grep \* | cut -c3-)'
 alias gbd='delete_merged_branches'
-
-# General
-export EDITOR='vim'
-HISTSIZE=100000
-SAVEHIST=100000
 
 # zplug
 export ZPLUG_HOME=/usr/local/opt/zplug

@@ -13,19 +13,17 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim' 
 
 Plugin 'kien/ctrlp.vim'
+
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'pangloss/vim-javascript'
 Plugin 'sjl/gundo.vim'
 nnoremap <C-z> :GundoToggle<CR>
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-sensible'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 
-Plugin 'dantler/vim-alternate'
-nnoremap :a<CR> :A<CR>
-
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
-Plugin 'pangloss/vim-javascript'
-
-Plugin 'bling/vim-airline'
-Plugin 'christoomey/vim-tmux-navigator'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -156,10 +154,10 @@ noremap p ]p
 noremap P [p
 
 "switch split windows quickly
-noremap <C-h> <C-w>h
-noremap <C-j> <C-w>j
-noremap <C-k> <C-w>k
-noremap <C-l> <C-w>l
+"noremap <C-h> <C-w>h
+"noremap <C-j> <C-w>j
+"noremap <C-k> <C-w>k
+"noremap <C-l> <C-w>l
 
 "After auto-bracket completion and enter, put cursor in coding spot
 inoremap {<CR> {<CR>}<C-o>O

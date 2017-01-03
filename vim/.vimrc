@@ -12,6 +12,7 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
+Plugin 'alvan/vim-closetag'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'kien/ctrlp.vim'
@@ -24,11 +25,16 @@ nnoremap <C-z> :GundoToggle<CR>
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-repeat'
+Plugin 'Valloric/MatchTagAlways'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 
 " Airline config
 let g:airline_theme='bubblegum'
+
+" Closetag config
+let g:closetag_filenames = "*.xml,*.html,*.xhtml,*.phtml,*.php"
+au FileType xml,html,phtml,php,xhtml,js let b:delimitMate_matchpairs = "(:),[:],{:}"
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -107,9 +113,11 @@ if exists('+colorcolumn')
   set colorcolumn=+1
 else
   highlight OverLength ctermbg=gray ctermfg=white guibg=#592929
-  match OverLength /\%>81v.\+/
+  match OverLength /\%>81v.\+
 endif
+
 filetype on
+filetype indent on
 
 "------------------End set statements. Begin remapping.-------------------------
 

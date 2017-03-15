@@ -1,6 +1,7 @@
 # General
 export EDITOR='vim'
-HISTFILE=~/.zsh_history
+setopt inc_append_history
+HISTFILE=$HOME/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 
@@ -26,15 +27,17 @@ zsh_git_branch() {
   out=" $out"; 
   echo $out
 }
+git_branch_current() {
+  git rev-parse --abbrev-ref HEAD
+}
 
 delete_merged_branches() {
   branches=("${(@f)$(gb)}")
-  cur_branch=$(git-branch-current)
   for branch in $branches; do
     if [[ "$branch" =~ "master" ]]; then
       continue
     fi
-    if [[ "$branch" =~ "$(git-branch-current)" ]]; then
+    if [[ "$branch" =~ "$(git_branch_current)" ]]; then
       continue
     fi
     echo $branch
@@ -67,6 +70,16 @@ alias gfppr='pr_warning && git push -f origin head:$(git branch | grep \* | cut 
 alias gfp='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c3-)'
 alias gp='pr_warning && git push origin head:$(git branch | grep \* | cut -c3-)'
 alias gbd='delete_merged_branches'
+alias gupdate='gco master && git pull && gco - && git rebase master'
+alias gclean='gco master && git pull && gbd'
+
+gra() {
+  git commit -am "ra" && git rebase -i master
+}
+
+gcob() {
+  gco -b mshelley/"$1"
+}
 
 # zplug
 export ZPLUG_HOME=/usr/local/opt/zplug

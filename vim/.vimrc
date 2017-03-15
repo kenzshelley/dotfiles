@@ -25,7 +25,7 @@ nnoremap <C-z> :GundoToggle<CR>
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-repeat'
-Plugin 'Valloric/MatchTagAlways'
+"Plugin 'Valloric/MatchTagAlways'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 
@@ -141,10 +141,10 @@ noremap p ]p
 noremap P [p
 
 "switch split windows quickly
-"noremap <C-h> <C-w>h
-"noremap <C-j> <C-w>j
-"noremap <C-k> <C-w>k
-"noremap <C-l> <C-w>l
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
 
 "After auto-bracket completion and enter, put cursor in coding spot
 inoremap {<CR> {<CR>}<C-o>O

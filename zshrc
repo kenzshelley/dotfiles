@@ -65,6 +65,7 @@ pr_warning() {
 alias gs='git status'
 alias gd='git diff'
 alias ga='git add'
+alias gco='git checkout'
 alias gppr='pr_warning && git push origin head:$(git branch | grep \* | cut -c3-) && gpr'
 alias gfppr='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c3-) && gpr'
 alias gfp='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c3-)'
@@ -85,10 +86,13 @@ gcob() {
 export ZPLUG_HOME=/usr/local/opt/zplug
 source $ZPLUG_HOME/init.zsh
 
-zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
+# bhilburn version has a fucked up commit that breaks everything
+#zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
+zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
+zplug "kenzshelley/branch-hider"
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "modules/history-substring-search", from:prezto
 zplug "modules/prompt", from:prezto
 
-zplug load
 zplug install
+zplug load

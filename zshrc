@@ -11,8 +11,8 @@ autoload -U compinit && compinit
 zmodload -i zsh/complist
 
 # Custom Powerline Settings
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir custom_git_branch)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=()
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=()
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(custom_git_branch dir)
 POWERLEVEL9K_CUSTOM_GIT_BRANCH="zsh_git_branch"
 POWERLEVEL9K_CUSTOM_GIT_BRANCH_BACKGROUND="211"
 POWERLEVEL9K_CUSTOM_GIT_BRANCH_FOREGROUND="black"
@@ -27,6 +27,7 @@ zsh_git_branch() {
   out=" $out"; 
   echo $out
 }
+
 git_branch_current() {
   git rev-parse --abbrev-ref HEAD
 }
@@ -52,20 +53,36 @@ delete_merged_branches() {
 }
 
 pr_warning() {
-  pr_warning_string='Did you:\n * Make everything final that should be final\n * Check for random new lines\n * Actually test this as much as possible\n * SQUASH'
+  local pr_warning_string='Did you:\n * Make everything final that should be final\n * Check for random new lines\n * Actually test this as much as possible\n * SQUASH'
   echo $pr_warning_string
   read answer
   if [ $answer != "y" ]; then
     return 1
+    echo 'not continuing...'
   fi
   echo 'continuing...'
 }
 
-# Git Aliases
+# ZPLUG
+export ZPLUG_HOME=/usr/local/opt/zplug
+source $ZPLUG_HOME/init.zsh
+
+# bhilburn version has a fucked up commit that breaks everything, so use my fork
+zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
+zplug "modules/history-substring-search", from:prezto
+zplug "modules/prompt", from:prezto
+zplug "modules/utility", from:prezto
+zplug "modules/git", from:prezto
+zplug "kenzshelley/branch-hider", defer:2 # to set aliases properly
+zplug "zsh-users/zsh-syntax-highlighting", defer:3
+
+zplug install
+zplug load
+
+# Git Aliases -- Keep these below zplug so that my aliases overwrite plugins'.
 alias gs='git status'
 alias gd='git diff'
 alias ga='git add'
-alias gco='git checkout'
 alias gppr='pr_warning && git push origin head:$(git branch | grep \* | cut -c3-) && gpr'
 alias gfppr='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c3-) && gpr'
 alias gfp='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c3-)'
@@ -73,26 +90,13 @@ alias gp='pr_warning && git push origin head:$(git branch | grep \* | cut -c3-)'
 alias gbd='delete_merged_branches'
 alias gupdate='gco master && git pull && gco - && git rebase master'
 alias gclean='gco master && git pull && gbd'
+#alias gb='gb-shown' # remap alias from branch-hider to overwrite alias from git mod
+#alias gba='gb-all'
 
-gra() {
+gr-away() {
   git commit -am "ra" && git rebase -i master
 }
 
 gcob() {
   gco -b mshelley/"$1"
 }
-
-# zplug
-export ZPLUG_HOME=/usr/local/opt/zplug
-source $ZPLUG_HOME/init.zsh
-
-# bhilburn version has a fucked up commit that breaks everything
-#zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
-zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
-zplug "kenzshelley/branch-hider"
-zplug "zsh-users/zsh-syntax-highlighting"
-zplug "modules/history-substring-search", from:prezto
-zplug "modules/prompt", from:prezto
-
-zplug install
-zplug load

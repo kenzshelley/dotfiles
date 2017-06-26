@@ -28,6 +28,17 @@ Plugin 'tpope/vim-repeat'
 "Plugin 'Valloric/MatchTagAlways'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+Plugin 'Shougo/neocomplete'
+
+" neo
+" Enable at startup
+let g:neocomplete#enable_at_startup = 1
+" Minimum syntax keyword length
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+
+" Eclim
+let g:EclimCompletionMethod = 'omnifunc'
+inoremap <C-Space> <C-x><C-u>
 
 " Airline config
 let g:airline_theme='bubblegum'
@@ -40,7 +51,36 @@ au FileType xml,html,phtml,php,xhtml,js let b:delimitMate_matchpairs = "(:),[:],
 call vundle#end()            " required
 filetype plugin indent on    " required
 
-execute pathogen#infect()
+" Ctrl P stuff
+" Ag - The Silver Searcher
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects
+  " .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+  " ag is almost fast enough that CtrlP doesn't need to cache, but not
+  " when using java
+  " let g:ctrlp_use_caching = 0
+endif
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_match_window = 'order:ttb,max:20'
+" dont serch but every 250ms, eliminates some annoying fumble finger
+" behavior
+let g:ctrlp_lazy_update = 150
+
+" Search by file name by default (<c-d> switches modes)
+let g:ctrlp_by_filename = 0
+
+" Regex mode by default (<c-r> to toggle)
+let g:ctrlp_regexp = 0
+
+let g:ctrlp_working_path_mode = 'acr'
+
+" CtrlP window appears at bottom instead of top
+let g:ctrlp_match_window_bottom = 1
 
 "Color scheme
 syntax enable

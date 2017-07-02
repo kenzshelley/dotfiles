@@ -28,6 +28,13 @@ Plugin 'tpope/vim-repeat'
 "Plugin 'Valloric/MatchTagAlways'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+Plugin 'mxw/vim-jsx'
+
+" for vim js
+set foldmethod=syntax
+
+" Enable jsx highlighting/formatting in js files
+let g:jsx_ext_required = 0
 
 " Airline config
 let g:airline_theme='bubblegum'

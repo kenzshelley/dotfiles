@@ -5,10 +5,16 @@ HISTFILE=$HOME/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 
-bindkey -e
+## vim mode
+#bindkey -v
+## make reverse search work in vim mode
+bindkey '^R' history-incremental-pattern-search-backward
 
 autoload -U compinit && compinit
 zmodload -i zsh/complist
+
+eval $(thefuck --alias) #ruby is dumb
+source $HOME/.rvm/scripts/rvm
 
 # Custom Powerline Settings
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
@@ -80,6 +86,11 @@ zplug install
 zplug load
 
 # Git Aliases -- Keep these below zplug so that my aliases overwrite plugins'.
+alias vim='mvim -v'
+alias vi='mvim -v'
+alias gl='git log'
+alias gb='git branch'
+alias gco='git checkout'
 alias gs='git status'
 alias gd='git diff'
 alias ga='git add'
@@ -89,9 +100,14 @@ alias gfp='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c
 alias gp='pr_warning && git push origin head:$(git branch | grep \* | cut -c3-)'
 alias gbd='delete_merged_branches'
 alias gupdate='gco master && git pull && gco - && git rebase master'
-alias gclean='gco master && git pull && gbd'
 #alias gb='gb-shown' # remap alias from branch-hider to overwrite alias from git mod
 #alias gba='gb-all'
+alias gc='gco master && git pull && gbd'
+alias k='kochiku'
+
+g-to-master() {
+  git checkout origin/master "$1"
+}
 
 gr-away() {
   git commit -am "ra" && git rebase -i master
@@ -99,4 +115,12 @@ gr-away() {
 
 gcob() {
   gco -b mshelley/"$1"
+}
+
+gcomb() {
+  gco master && gco -b mshelley/"$1"
+}
+
+gcom() {
+  gco mshelley/"$1"
 }

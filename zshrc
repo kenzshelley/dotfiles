@@ -12,9 +12,7 @@ bindkey '^R' history-incremental-pattern-search-backward
 
 autoload -U compinit && compinit
 zmodload -i zsh/complist
-
-eval $(thefuck --alias) #ruby is dumb
-source $HOME/.rvm/scripts/rvm
+eval $(thefuck --alias)
 
 # Custom Powerline Settings
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
@@ -31,15 +29,15 @@ zsh_git_branch() {
   fi
 
   out=" $out"; 
+
   echo $out
 }
-
 git_branch_current() {
   git rev-parse --abbrev-ref HEAD
 }
 
 delete_merged_branches() {
-  branches=("${(@f)$(gb)}")
+  local branches=("${(@f)$(gb)}")
   for branch in $branches; do
     if [[ "$branch" =~ "master" ]]; then
       continue
@@ -50,16 +48,16 @@ delete_merged_branches() {
     echo $branch
 
     setopt shwordsplit
-    array=($branch)
-    branch_name=$array[1]
+    local array=($branch)
+    local branch_name=$array[1]
     unsetopt shwordsplit
 
-    gb -d $branch_name
+    git branch -d $branch_name
   done
 }
 
 pr_warning() {
-  local pr_warning_string='Did you:\n * Make everything final that should be final\n * Check for random new lines\n * Actually test this as much as possible\n * SQUASH'
+  local pr_warning_string='Did you:\n * Make everything final that should be final\n * Check for random new lines\n * Actually test this as much as possible\n * SQUASH\n * CHECK FOR WARNINGS. NPES.'
   echo $pr_warning_string
   read answer
   if [ $answer != "y" ]; then
@@ -71,8 +69,7 @@ pr_warning() {
 
 # ZPLUG
 export ZPLUG_HOME=/usr/local/opt/zplug
-source $ZPLUG_HOME/init.zsh
-
+source $ZPLUG_HOME/init.zsh 
 # bhilburn version has a fucked up commit that breaks everything, so use my fork
 zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
 zplug "modules/history-substring-search", from:prezto
@@ -100,19 +97,22 @@ alias gfp='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c
 alias gp='pr_warning && git push origin head:$(git branch | grep \* | cut -c3-)'
 alias gbd='delete_merged_branches'
 alias gupdate='gco master && git pull && gco - && git rebase master'
-#alias gb='gb-shown' # remap alias from branch-hider to overwrite alias from git mod
-#alias gba='gb-all'
+alias gupdate-i='gco master && git pull && gco - && git rebase -i master'
 alias gc='gco master && git pull && gbd'
 alias k='kochiku'
+alias ku='kubectl'
+alias grap='git commit -am "ra" && git rebase -i head~2 && gfp'
+alias gra='git commit -am "ra" && git rebase -i head~2'
+alias deploys='python3 ~/Development/risksys/deploysneeded.py'
+alias 'git commit'=''
 
 g-to-master() {
   git checkout origin/master "$1"
 }
 
-gr-away() {
+gra() {
   git commit -am "ra" && git rebase -i master
 }
-
 gcob() {
   gco -b mshelley/"$1"
 }
@@ -124,3 +124,68 @@ gcomb() {
 gcom() {
   gco mshelley/"$1"
 }
+
+undo-fms() {
+  gco origin/master signal-lib/src/main/resources/fms/acc.yaml
+  gco origin/master signal-lib/src/main/resources/fms/feature-ext.yaml
+  gco origin/master signal-lib/src/main/resources/fms/signal-acc.yaml
+}
+
+inew() {
+  CUR_DIR_NAME=$(basename $(pwd))
+  PROJ_DIR=~/Development/$CUR_DIR_NAME/squarepants/idea/
+  OLD_VERSION=$(cat $PROJ_DIR/.version)
+  NEW_VERSION=$(($OLD_VERSION + 1))
+
+  OLD_NAME="$CUR_DIR_NAME-$OLD_VERSION"
+  NEW_NAME="$CUR_DIR_NAME-$NEW_VERSION"
+
+  rm -rf $PROJ_DIR/$OLD_NAME
+  pants idea beacon:: connectedusers:: frisky:: howdah:: riskarbiter:: riskml-common:: signal-lib:: --idea-project-name=$NEW_NAME
+
+  echo $NEW_VERSION > $PROJ_DIR/.version
+}
+
+ptest() {
+  if [ $1 == "" ]; then
+    echo "Please provide the name of the module you want to test"
+  fi 
+  if [ $2 != "" ]; then
+    pants test $1\:test --test-junit-test=$2 $3
+    return
+  fi 
+
+  pants test $1\:test $3
+}
+
+bm() {
+  echo "updating master"
+  gco master
+  git pull
+
+  echo "updating branches"
+  local branches=("${(@f)$(gb)}")
+  for branch in $branches; do
+    echo "updating $branch"
+    gco $branch
+    git rebase master
+    gco -
+  done 
+
+  echo "finished"
+}
+
+# zplug
+export ZPLUG_HOME=/usr/local/opt/zplug
+source $ZPLUG_HOME/init.zsh
+
+# bhilburn version has a fucked up commit that breaks everything
+#zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
+zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
+zplug "kenzshelley/branch-hider"
+zplug "zsh-users/zsh-syntax-highlighting"
+zplug "modules/history-substring-search", from:prezto
+zplug "modules/prompt", from:prezto
+
+zplug install
+zplug load

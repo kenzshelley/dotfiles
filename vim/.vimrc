@@ -28,11 +28,11 @@ Plugin 'tpope/vim-repeat'
 "Plugin 'Valloric/MatchTagAlways'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'mxw/vim-jsx'
 Plugin 'Shougo/neocomplete'
+Plugin 'mxw/vim-jsx'
 
 " for vim js
-set foldmethod=syntax
+" set foldmethod=syntax
 
 " Enable jsx highlighting/formatting in js files
 let g:jsx_ext_required = 0
@@ -53,6 +53,9 @@ let g:airline_theme='bubblegum'
 " Closetag config
 let g:closetag_filenames = "*.xml,*.html,*.xhtml,*.phtml,*.php"
 au FileType xml,html,phtml,php,xhtml,js let b:delimitMate_matchpairs = "(:),[:],{:}"
+
+" react
+let g:jsx_ext_required = 0
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -153,7 +156,7 @@ endtry
 set ffs=unix,dos,mac "Default file types
 
 "Text autowrap to 80 columns
-set textwidth=80
+set textwidth=100
 autocmd FileType sh setlocal textwidth=0
 set wrap
 if exists('+colorcolumn')

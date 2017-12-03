@@ -12,9 +12,7 @@ bindkey '^R' history-incremental-pattern-search-backward
 
 autoload -U compinit && compinit
 zmodload -i zsh/complist
-eval $(thefuck --alias)
-
-# Custom Powerline Settings
+eval $(thefuck --alias) # Custom Powerline Settings
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(custom_git_branch)
 POWERLEVEL9K_CUSTOM_GIT_BRANCH="zsh_git_branch"
@@ -67,21 +65,6 @@ pr_warning() {
   echo 'continuing...'
 }
 
-# ZPLUG
-export ZPLUG_HOME=/usr/local/opt/zplug
-source $ZPLUG_HOME/init.zsh 
-# bhilburn version has a fucked up commit that breaks everything, so use my fork
-zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
-zplug "modules/history-substring-search", from:prezto
-zplug "modules/prompt", from:prezto
-zplug "modules/utility", from:prezto
-zplug "modules/git", from:prezto
-zplug "kenzshelley/branch-hider", defer:2 # to set aliases properly
-zplug "zsh-users/zsh-syntax-highlighting", defer:3
-
-zplug install
-zplug load
-
 # Git Aliases -- Keep these below zplug so that my aliases overwrite plugins'.
 alias vim='mvim -v'
 alias vi='mvim -v'
@@ -110,9 +93,6 @@ g-to-master() {
   git checkout origin/master "$1"
 }
 
-gra() {
-  git commit -am "ra" && git rebase -i master
-}
 gcob() {
   gco -b mshelley/"$1"
 }
@@ -181,6 +161,8 @@ source $ZPLUG_HOME/init.zsh
 
 # bhilburn version has a fucked up commit that breaks everything
 #zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
+zplug "modules/utility", from:prezto
+zplug "modules/git", from:prezto
 zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
 zplug "kenzshelley/branch-hider"
 zplug "zsh-users/zsh-syntax-highlighting"

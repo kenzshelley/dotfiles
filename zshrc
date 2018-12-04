@@ -109,6 +109,7 @@ alias deploys='python3 ~/Development/risksys/deploysneeded.py'
 alias sourcez='source ~/.zshrc'
 alias editz='vi ~/dotfiles/zshrc'
 alias fms='pants run signal-lib/src/main/java:feature_generator'
+alias grafp='gra && gfp'
 
 g-to-master() {
   git checkout origin/master "$1"

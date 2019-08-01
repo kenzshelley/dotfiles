@@ -118,7 +118,8 @@ set smarttab "When on, a <Tab> in front of a line inserts blanks according to 's
 set expandtab "In Insert mode: Use the appropriate number of spaces to insert a <Tab>.
 set autoindent "Copy indent from current line when starting a new line (typing <CR> in Insert mode or when using the "o" or "O" command).
 set smartindent "For C programs
-autocmd Filetype python setlocal nosmartindent
+"autocmd Filetype python setlocal nosmartindent
+autocmd Filetype python setlocal nosmartindent tabstop=4 shiftwidth=4
 autocmd FileType asm setlocal noautoindent shiftwidth=8 tabstop=8
 autocmd Filetype xml setlocal expandtab tabstop=4 shiftwidth=4
 autocmd FileType java setlocal noexpandtab tabstop=4 shiftwidth=4

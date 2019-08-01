@@ -1,3 +1,6 @@
+# Square stuff (first so my stuff overrides)
+source ~/Development/config_files/square/zshrc
+
 # General
 export EDITOR='vim'
 setopt inc_append_history
@@ -5,8 +8,7 @@ HISTFILE=$HOME/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 
-# set lpass timeout
-LPASS_AGENT_TIMEOUT=0; # 1 day in seconds
+# set lpass timeout LPASS_AGENT_TIMEOUT=0; # 1 day in seconds
 
 ## vim mode
 #bindkey -v
@@ -14,7 +16,8 @@ LPASS_AGENT_TIMEOUT=0; # 1 day in seconds
 bindkey '^R' history-incremental-pattern-search-backward
 autoload -U compinit && compinit
 zmodload -i zsh/complist
-eval $(thefuck --alias) # Custom Powerline Settings
+#eval $(thefuck --alias)
+# Custom Powerline Settings
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(custom_git_branch)
 POWERLEVEL9K_CUSTOM_GIT_BRANCH="zsh_git_branch"
@@ -93,10 +96,10 @@ alias gco='git checkout'
 alias gs='git status'
 alias gd='git diff'
 alias ga='git add'
-alias gppr='pr_warning && git push origin head:$(git branch | grep \* | cut -c3-) && gpr'
-alias gfppr='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c3-) && gpr'
-alias gfp='pr_warning && git push -f origin head:$(git branch | grep \* | cut -c3-)'
-alias gp='pr_warning && git push origin head:$(git branch | grep \* | cut -c3-)'
+alias gppr='pr_warning && git push origin HEAD:$(git branch | grep \* | cut -c3-) && gpr'
+alias gfppr='pr_warning && git push -f origin HEAD:$(git branch | grep \* | cut -c3-) && gpr'
+alias gfp='pr_warning && git push -f origin HEAD:$(git branch | grep \* | cut -c3-)'
+alias gp='pr_warning && git push origin HEAD:$(git branch | grep \* | cut -c3-)'
 alias gbd='delete_merged_branches'
 alias gupdate='gco master && git pull && gco - && git rebase master'
 alias gupdate-i='gco master && git pull && gco - && git rebase -i master'
@@ -107,9 +110,18 @@ alias gra='git commit -a --fixup head && git rebase -i --autosquash head~2'
 alias grap='gra && gfp'
 alias deploys='python3 ~/Development/risksys/deploysneeded.py'
 alias sourcez='source ~/.zshrc'
-alias editz='vi ~/dotfiles/zshrc'
+alias editz='vi ~/Development/dotfiles/zshrc'
 alias fms='pants run signal-lib/src/main/java:feature_generator'
 alias grafp='gra && gfp'
+#alias pants='./pants'
+alias tap='touch'
+alias pssh='ssh pi@192.168.1.69'
+
+test_gfp() {
+  branch=$(git branch | grep \* | cut -c3-)
+  echo $branch
+  #pr_warning && git push -f origin head:$branch
+}
 
 g-to-master() {
   git checkout origin/master "$1"
@@ -176,7 +188,7 @@ inew() {
   NEW_NAME="$CUR_DIR_NAME-$NEW_VERSION"
 
   rm -rf $PROJ_DIR/$OLD_NAME
-  pants idea beacon:: connectedusers:: common-cloud:: foundry:: frisky:: howdah:: riskarbiter:: riskml-common:: replaying-client:: santa:: signal-lib::  signalsmith:: --idea-project-name=$NEW_NAME
+  ./pants idea beacon:: connectedusers:: common-cloud:: foundry:: frisky:: howdah:: riskarbiter/src/main:: riskml-common:: replaying-client:: santa:: signal-lib::  signalsmith:: --idea-project-name=$NEW_NAME
 
   echo $NEW_VERSION > $PROJ_DIR/.version
 }
@@ -188,7 +200,7 @@ iupdate() {
 
   NAME="$CUR_DIR_NAME-$VERSION"
 
-  pants idea beacon:: connectedusers:: common-cloud:: compliancepundit:: foundry:: frisky:: howdah:: riskarbiter:: riskml-common:: santa:: signal-lib:: signalsmith:: replaying-client:: --idea-project-name=$NAME
+  pants idea beacon:: connectedusers:: common-cloud:: compliancepundit:: foundry:: frisky:: howdah:: riskarbiter/src/main:: riskml-common:: santa:: signal-lib:: signalsmith:: replaying-client:: --idea-project-name=$NAME
 }
 
 ptest() {
@@ -196,11 +208,11 @@ ptest() {
     echo "Please provide the name of the module you want to test"
   fi
   if [ $2 != "" ]; then
-    pants test $1\:test --test-junit-test=$2 $3
+    ./pants test $1\:test --test-junit-test="$2" $3
     return
   fi
 
-  pants test $1\:test $3
+  ./pants test $1\:test $3
 }
 
 bm() {
@@ -229,3 +241,17 @@ fixfms() {
   gco master && git pull && gco - && git rebase master
   pants run signal-lib/src/main/java:feature_generator
 }
+
+runbt() {
+  export BIGTABLE_EMULATOR_HOST=localhost:8086
+  gcloud beta emulators bigtable start
+}
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/mshelley/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/mshelley/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/mshelley/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mshelley/google-cloud-sdk/completion.zsh.inc'; fi

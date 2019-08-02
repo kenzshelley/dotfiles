@@ -127,13 +127,6 @@ g-to-master() {
   git checkout origin/master "$1"
 }
 
-test() {
-  zparseopts -E -A args -- t:=target j:=jira
-
-  t=$args[-t]
-  print 't: ' "$t"
-}
-
 gcob() {
   zparseopts -E -A args -- t: j:
   target=$args[-t]

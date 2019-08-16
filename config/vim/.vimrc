@@ -220,50 +220,6 @@ nnoremap <right> >>
 "Y yanks to the end of the line, rather than the whole line (which yy does)
 noremap Y y$
 
-"Comment toggling: http://goo.gl/oaGHNo
-"Allows you to select something in visual mode, and then comment it (either at
-"the start or at the indentation level)
-"David is da bomb.com basically
-vnoremap , :call ToggleCommentAtLineStart()<CR>
-vnoremap . :call ToggleCommentAtIndentationLevel()<CR>
-function! GetCommentString()
-  if &filetype ==# 'vim'
-    return '" '
-  elseif &filetype ==# 'cpp' || &filetype ==# 'java' || &filetype ==# 'proto' ||
-      \ &filetype ==# 'javascript'
-    return '// '
-  elseif &filetype ==# 'tex'
-    return '% '
-  elseif &filetype ==# 'ruby' || &filetype ==# 'python' ||
-      \ &filetype ==# 'gitconfig' || &filetype ==# 'cmake' || &filetype ==# 'sh'
-      \ || &filetype ==# 'readline' || &filetype ==# 'asm' || &filetype ==# 'conf'
-    return '# '
-  endif
-  return 'NO_COMMENT_STRING_SET '
-endfunction
-function! ToggleCommentAtLineStart() range
-  let comment_string = GetCommentString()
-  let line = getline('.')
-  if line =~ '^' . comment_string
-    "Uncomment.
-    execute a:firstline . "," . a:lastline . 's/^' . escape(comment_string, '/') . '//'
-  else
-    "Comment.
-    execute a:firstline . "," . a:lastline . 's/^/\=printf( "%s", comment_string )/'
-  endif
-endfunction
-function! ToggleCommentAtIndentationLevel() range
-  let comment_string = GetCommentString()
-  let line = getline('.')
-  if line =~? '^\s*' . comment_string
-    "Uncomment.
-    execute a:firstline . "," . a:lastline . 's/^\(\s*\)' . escape(comment_string, '/') . '\(\s*\)/\1/'
-  else
-    "Comment.
-    execute a:firstline . "," . a:lastline . 's/^\(\s*\)/\=submatch(1) . printf( "%s", comment_string )/'
-  endif
-endfunction
-
 "In Normal mode, semicolon brings up colon prompt
 cnoremap ; :
 nnoremap ; :

@@ -1,0 +1,4 @@
+jedi
+python-language-server[pyflakes]
+pyls-mypy
+pyls-isort

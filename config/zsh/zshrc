@@ -1,8 +1,14 @@
 # Square stuff (first so my stuff overrides)
 source ~/Development/config_files/square/zshrc
 
+# Put python3 symlinks ahead of system on path
+PATH=/usr/local/opt/python/libexec/bin:$PATH
+# Put homebrew ahead of system on path
+PATH=/user/local/bin:$PATH
+
 # General
 export EDITOR='vim'
+# This gets set in square zshrc :/ unsetopt appendhistory
 setopt inc_append_history
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=100000
@@ -88,7 +94,8 @@ zplug load
 # Git Aliases -- Keep these below zplug so that my aliases overwrite plugins'.
 alias gpr='~/Development/config_files/bin/gpr' # broke this somehow, too lazy to fix, don't want to reinstall cause worried will break other shit
 alias vim='mvim -v'
-alias vi='mvim -v'
+# alias vi='mvim -v'
+alias vi='nvim' 
 alias gl='git log'
 alias gb='git branch'
 alias gbv='git branch -vv'
@@ -110,7 +117,7 @@ alias gra='git commit -a --fixup head && git rebase -i --autosquash head~2'
 alias grap='gra && gfp'
 alias deploys='python3 ~/Development/risksys/deploysneeded.py'
 alias sourcez='source ~/.zshrc'
-alias editz='vi ~/Development/dotfiles/zshrc'
+alias editz='nv ~/Development/dotfiles/config/zsh/zshrc'
 alias fms='pants run signal-lib/src/main/java:feature_generator'
 alias grafp='gra && gfp'
 #alias pants='./pants'
@@ -241,6 +248,27 @@ runbt() {
   gcloud beta emulators bigtable start
 }
 
+gcp_tunnel() {
+  ENV=$1
+  TIME=180
+  ~/Development/kr-ops/bin/connect-to-kp-k8s-shared.sh $ENV $TIME
+}
+
+gcp_connect() {
+  APP=$1
+  export POD_NAME=$(kubectl get pods --namespace $APP -l "app=$APP" -o jsonpath="{.items[0].metadata.name}")
+  echo $POD_NAME
+  kubectl port-forward $POD_NAME 23000:23000 --namespace $APP
+}
+
+kill_gcp_tunnels() {
+  local pids=("${(@f)$(ps -ax | grep "compute_engine" | grep -v "grep" | cut -d " " -f 2)}")
+  for pid in $pids; do
+    echo "Killing pid $pid"
+    kill -9 $pid
+  done
+}
+
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
@@ -249,3 +277,22 @@ if [ -f '/Users/mshelley/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/mshell
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/mshelley/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mshelley/google-cloud-sdk/completion.zsh.inc'; fi
+
+ftmf() {
+  ulimit -n 4096
+}
+
+dstart() {
+  docker-machine start
+  eval "$(docker-machine env default)"
+}
+
+docker_bp() {
+  docker build -t $1 -f Dockerfile .
+  docker tag $1 gcr.io/sq-kp-infra-prod/$1
+  docker push gcr.io/sq-kp-infra-prod/$1 
+}
+
+# Fix too many files issue
+ftmf
+

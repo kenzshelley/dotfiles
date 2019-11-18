@@ -1,10 +1,14 @@
 " Install plugins
 source ~/.config/nvim/plugins.vim
 
+" Include CoC config
+source ~/.config/nvim/coc.vim
+
 """ Display settings
 set hidden " hides annoying 'No write since last change'
 set number " line numbers
 set ruler " cursor position
+set signcolumn=yes " shows sidebar, useful for coc
 
 """ Color scheme
 syntax enable

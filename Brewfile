@@ -1,3 +1,7 @@
-brew 'zplug'
 brew 'neovim'
-
+brew 'pipenv'
+brew 'the_silver_searcher'
+brew 'tmux'
+brew 'zplug'
+tap 'intellij-idea'
+tap 'spotify'

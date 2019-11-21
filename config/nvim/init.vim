@@ -3,6 +3,7 @@ source ~/.config/nvim/plugins.vim
 
 " Include CoC config
 source ~/.config/nvim/coc.vim
+set statusline^=%{coc#status()}
 
 """ Display settings
 set hidden " hides annoying 'No write since last change'
@@ -13,13 +14,16 @@ set signcolumn=yes " shows sidebar, useful for coc
 """ Color scheme
 syntax enable
 set background=dark
+let base16colorspace=256  " Access colors present in 256 colorspace
+colorscheme base16-material-darker
+"colorscheme base16-default-dark
 
 """ Random behavior
 " prevent backup files
 set nobackup
 set nowritebackup
-
 set noerrorbells " No sound on errors
+map <SPACE> <leader>
 
 """ Searching
 set ignorecase " Ignore case when searching by default
@@ -33,6 +37,31 @@ set expandtab " In Insert mode: Use the appropriate number of spaces to insert a
 set shiftround " Use multiple of shiftwidth when indenting with < or >
 set shiftwidth=2
 set softtabstop=2
+
+""" Airline config
+let g:airline_powerline_fonts = 1
+let g:airline_theme='base16'
+
+""" VimGrepper config
+let g:grepper = {
+  \ 'highlight': 1,
+  \ 'tools': ['ag']
+  \}
+nmap gs <plug>(GrepperOperator)
+xmap gs <plug>(GrepperOperator)
+nnoremap <leader>g :Grepper<cr>
+
+""" Linting (ALE) unclear if this can work with coc
+"let g:ale_lint_on_insert_leave = 1
+"let g:ale_lint_on_save = 1
+"let g:ale_linters = {
+"\   'typescript': ['tsserver'],
+"\   'python': ['flake8'],
+"\   'zsh': ['shellcheck'],
+"\   'bash': ['shellcheck'],
+"\}
+"let g:ale_fix_on_save = 1
+"let g:airline#extensions#ale#enabled = 1 "show ale errors in airline
 
 """ Filetype
 filetype on " Let vim detect filetypes

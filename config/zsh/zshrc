@@ -3,16 +3,20 @@ source ~/Development/config_files/square/zshrc
 
 # Put python3 symlinks ahead of system on path
 PATH=/usr/local/opt/python/libexec/bin:$PATH
-# Put homebrew ahead of system on path
-PATH=/user/local/bin:$PATH
-
+# Put homebrew ahead of system on path PATH=/user/local/bin:$PATH 
 # General
-export EDITOR='vim'
+export VISUAL='nvim'
+export EDITOR=$VISUAL
+export TERM=xterm-256color
+
+## History
 # This gets set in square zshrc :/ unsetopt appendhistory
 setopt inc_append_history
-HISTFILE=$HOME/.zsh_history
-HISTSIZE=100000
-SAVEHIST=100000
+setopt APPEND_HISTORY
+setopt HIST_IGNORE_DUPS
+export HISTFILE=$HOME/.zsh_history
+export HISTSIZE=100000
+export SAVEHIST=100000
 
 # set lpass timeout LPASS_AGENT_TIMEOUT=0; # 1 day in seconds
 
@@ -82,11 +86,12 @@ source $ZPLUG_HOME/init.zsh
 #zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
 zplug "modules/utility", from:prezto
 zplug "modules/git", from:prezto
-zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
+#zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
 zplug "kenzshelley/branch-hider"
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "modules/history-substring-search", from:prezto
 zplug "modules/prompt", from:prezto
+zplug "romkatv/powerlevel10k", as:theme, depth:1
 
 zplug install
 zplug load
@@ -295,4 +300,12 @@ docker_bp() {
 
 # Fix too many files issue
 ftmf
+
+
+# Unclear if i need this
+# Base16 Shell
+# BASE16_SHELL="$HOME/.config/base16-shell/"
+# [ -n "$PS1" ] && \
+#     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+#         eval "$("$BASE16_SHELL/profile_helper.sh")"
 

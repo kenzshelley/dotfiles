@@ -8,6 +8,9 @@ pushd fonts
 ./install.sh
 popd fonts
 
+# Install work specific setup
+./setup_work.sh
+
 # Link dotfiles
 ln -s ~/Development/dotfiles/config/vim/.vimrc ~/.vimrc
 ln -s ~/Development/dotfiles/config/zsh/zshrc ~/.zshrc

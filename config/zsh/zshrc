@@ -3,7 +3,7 @@ source ~/Development/config_files/square/zshrc
 
 # Put python3 symlinks ahead of system on path
 PATH=/usr/local/opt/python/libexec/bin:$PATH
-# Put homebrew ahead of system on path PATH=/user/local/bin:$PATH 
+# Put homebrew ahead of system on path PATH=/user/local/bin:$PATH
 # General
 export VISUAL='nvim'
 export EDITOR=$VISUAL
@@ -100,7 +100,7 @@ zplug load
 alias gpr='~/Development/config_files/bin/gpr' # broke this somehow, too lazy to fix, don't want to reinstall cause worried will break other shit
 alias vim='mvim -v'
 # alias vi='mvim -v'
-alias vi='nvim' 
+alias vi='nvim'
 alias gl='git log'
 alias gb='git branch'
 alias gbv='git branch -vv'
@@ -277,12 +277,6 @@ kill_gcp_tunnels() {
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/mshelley/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/mshelley/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/mshelley/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mshelley/google-cloud-sdk/completion.zsh.inc'; fi
-
 ftmf() {
   ulimit -n 4096
 }
@@ -295,12 +289,13 @@ dstart() {
 docker_bp() {
   docker build -t $1 -f Dockerfile .
   docker tag $1 gcr.io/sq-kp-infra-prod/$1
-  docker push gcr.io/sq-kp-infra-prod/$1 
+  docker push gcr.io/sq-kp-infra-prod/$1
 }
 
 # Fix too many files issue
 ftmf
 
+source ~/.p10k.zsh
 
 # Unclear if i need this
 # Base16 Shell
@@ -309,3 +304,9 @@ ftmf
 #     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
 #         eval "$("$BASE16_SHELL/profile_helper.sh")"
 
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/mshelley/Development/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/mshelley/Development/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/mshelley/Development/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mshelley/Development/google-cloud-sdk/completion.zsh.inc'; fi

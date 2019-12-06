@@ -24,6 +24,7 @@ set nobackup
 set nowritebackup
 set noerrorbells " No sound on errors
 map <SPACE> <leader>
+set clipboard=unnamed "paste through to tmux
 
 """ Searching
 set ignorecase " Ignore case when searching by default
@@ -62,6 +63,13 @@ nnoremap <leader>g :Grepper<cr>
 "\}
 "let g:ale_fix_on_save = 1
 "let g:airline#extensions#ale#enabled = 1 "show ale errors in airline
+"
+"
+""" base16
+if filereadable(expand("~/.vimrc_background"))
+  let base16colorspace=256
+  source ~/.vimrc_background
+endif
 
 """ Filetype
 filetype on " Let vim detect filetypes

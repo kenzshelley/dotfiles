@@ -72,10 +72,6 @@ delete_merged_branches() {
 pr_warning() {
   local pr_warning_string='Did you:\n * Make everything final that should be final\n * Check for random new lines\n * Actually test this as much as possible\n * SQUASH\n * CHECK FOR WARNINGS. NPES.\n * If it involves $$, fucking be careful.'
   echo $pr_warning_string
-  read answer
-  if [ $answer != "y" ]; then return 1 echo 'not continuing...'
-  fi
-  echo 'continuing...'
 }
 
 # zplug
@@ -288,8 +284,36 @@ dstart() {
 
 docker_bp() {
   docker build -t $1 -f Dockerfile .
-  docker tag $1 gcr.io/sq-kp-infra-prod/$1
-  docker push gcr.io/sq-kp-infra-prod/$1
+  docker tag $1 gcr.io/$2/$1
+  docker push gcr.io/$2/$1
+}
+
+dkp() {
+  dir=$(basename $(pwd))
+  if [ "$dir" = "Development" ]
+  then
+    echo "Not running because you'll delete the real kplib"
+    return
+  fi
+
+  rm -rf kplib
+  cp -r ../kplib ./
+
+  sha=$(get_sha kplib)
+  image="mshelley-kplib-$sha"
+  repo=$1
+  echo $image
+
+  docker build -t $image -f Dockerfile .
+  docker tag $image gcr.io/$repo/$image
+  docker push gcr.io/$repo/$image
+}
+
+get_sha() {
+  pushd ~/Development/$1 &> /dev/null
+  sha=$(git rev-parse HEAD)
+  echo $sha | cut -c 1-10
+  popd &> /dev/null
 }
 
 # Fix too many files issue
@@ -299,10 +323,10 @@ source ~/.p10k.zsh
 
 # Unclear if i need this
 # Base16 Shell
-# BASE16_SHELL="$HOME/.config/base16-shell/"
-# [ -n "$PS1" ] && \
-#     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-#         eval "$("$BASE16_SHELL/profile_helper.sh")"
+ BASE16_SHELL="$HOME/.config/base16-shell/"
+ [ -n "$PS1" ] && \
+     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+         eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 
 # The next line updates PATH for the Google Cloud SDK.

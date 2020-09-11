@@ -8,7 +8,7 @@ Plug 'jiangmiao/auto-pairs' " auto add brackets etc.
 Plug 'tpope/vim-commentary' " make it easy to comment blocks
 Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
 
-"Plug 'dense-analysis/ale' " linting
+Plug 'dense-analysis/ale' " linting
 
 " python
 Plug 'vim-python/python-syntax', { 'for': 'python' }
@@ -29,7 +29,7 @@ Plug 'chriskempson/base16-vim' "color scheme
 Plug 'mhinz/vim-signify' "shows +/- for diffs
 
 " Coc
-Plug 'kenzshelley/coc-python', {'do': 'yarn install --frozen-lockfile'}
+"Plug 'kenzshelley/coc-python', {'do': 'yarn install --frozen-lockfile'}
 
 
 call plug#end()

@@ -2,7 +2,7 @@
   "python.jediEnabled": false,
   "python.linting.enabled": true,
   "python.linting.flake8Enabled": false,
-  "python.analysis.memory.keepLibraryAst": true,
+  "diagnostic.displayByAle": true,
   "diagnostic.enable": true,
   "markdownlint.config": {
     "line-length": false

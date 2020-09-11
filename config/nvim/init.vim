@@ -4,6 +4,7 @@ source ~/.config/nvim/plugins.vim
 " Include CoC config
 source ~/.config/nvim/coc.vim
 set statusline^=%{coc#status()}
+set pyxversion=3
 
 """ Display settings
 set hidden " hides annoying 'No write since last change'
@@ -61,17 +62,20 @@ nmap gs <plug>(GrepperOperator)
 xmap gs <plug>(GrepperOperator)
 nnoremap <leader>g :Grepper<cr>
 
-""" Linting (ALE) unclear if this can work with coc
-"let g:ale_lint_on_insert_leave = 1
-"let g:ale_lint_on_save = 1
-"let g:ale_linters = {
-"\   'typescript': ['tsserver'],
-"\   'python': ['flake8'],
-"\   'zsh': ['shellcheck'],
-"\   'bash': ['shellcheck'],
-"\}
-"let g:ale_fix_on_save = 1
-"let g:airline#extensions#ale#enabled = 1 "show ale errors in airline
+"" Linting (ALE)
+let g:ale_disable_lsp = 1 " don't use ALE as aslanguage server client, use coc instead
+let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_save = 1
+let g:ale_sign_error = '>>'
+
+let g:ale_linters = {
+\   'typescript': ['tsserver'],
+\   'python': ['flake8'],
+\   'zsh': ['shellcheck'],
+\   'bash': ['shellcheck'],
+\}
+let g:ale_fix_on_save = 1
+let g:airline#extensions#ale#enabled = 1 "show ale errors in airline
 "
 "
 """ base16

@@ -15,8 +15,10 @@ set signcolumn=yes " shows sidebar, useful for coc
 syntax enable
 set background=dark
 let base16colorspace=256  " Access colors present in 256 colorspace
-colorscheme base16-material-darker
-"colorscheme base16-default-dark
+"If base16 shell file exists, use that for theme
+if filereadable(expand("~/.vimrc_background"))
+  source ~/.vimrc_background
+endif
 
 """ Random behavior
 " prevent backup files
@@ -31,6 +33,13 @@ set ignorecase " Ignore case when searching by default
 set smartcase " Be smart when deciding that a search is case-sensitive
 set hlsearch " Highlight searches
 set incsearch " more like webbrowser search
+
+"""fzf
+nnoremap <c-p> :Files<cr>
+let g:fzf_buffers_jump = 1
+
+"""Nerdtree
+map <C-n> :NERDTreeToggle<CR>
 
 """ Editing
 set showmatch " Matching braces highlighting
@@ -98,3 +107,5 @@ nnoremap <right> >>
 """ Remappings
 " In normal mode, semicolon brings up command prompt
 nnoremap ; :
+
+nnoremap <C-e> $

@@ -1,5 +1,3 @@
-
-
 " tab for autocomplete
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -20,8 +18,8 @@ nmap <silent> gr <Plug>(coc-references)
 
 " select extensions
 " Need to install python language server for this to work: pip install python-language-server
+"  \ 'coc-python',
 let g:coc_global_extensions = [
-  \ 'coc-python',
   \ 'coc-json',
   \ 'coc-yaml',
   \ 'coc-markdownlint',

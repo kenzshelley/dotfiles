@@ -2,5 +2,12 @@
   "python.jediEnabled": false,
   "python.linting.enabled": true,
   "python.linting.flake8Enabled": false,
-  "diagnostic.enable": true
+  "python.analysis.memory.keepLibraryAst": true,
+  "diagnostic.enable": true,
+  "markdownlint.config": {
+    "line-length": false
+  },
+  "tsserver.enable": true,
+  "tsserver.enableJavascript": true,
+  "tsserver.log": "verbose"
 }

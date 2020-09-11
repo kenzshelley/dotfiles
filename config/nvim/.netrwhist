@@ -1,5 +1,8 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhistcnt =3
+let g:netrw_dirhistcnt =6
+let g:netrw_dirhist_6='/Users/mshelley/Development/base16-shell'
+let g:netrw_dirhist_5='/Users/mshelley/.config/base16-shell'
+let g:netrw_dirhist_4='/usr/local/lib/python3.7/site-packages/kplib'
 let g:netrw_dirhist_3='/Users/mshelley/Development/kplib/kplib/resources'
 let g:netrw_dirhist_2='/Users/mshelley/Development/kplib/kplib'
 let g:netrw_dirhist_1='/Users/mshelley/Development/kplib/kplib/resources'
@@ -7,6 +10,3 @@ let g:netrw_dirhist_0='/Users/mshelley/Development/playground/kplib'
 let g:netrw_dirhist_9='/Users/mshelley/Development/risksys/rpc_channel'
 let g:netrw_dirhist_8='/Users/mshelley/Development/feature-store/etl-configs/snowflake/unit-support'
 let g:netrw_dirhist_7='/Users/mshelley/Development/feature-store/etl-configs/snowflake/sf-exemplar'
-let g:netrw_dirhist_6='/Users/mshelley/Development/docker-images/images/notebooks-kplib'
-let g:netrw_dirhist_5='/Users/mshelley/Development/kr-ops/tls'
-let g:netrw_dirhist_4='/Users/mshelley/Development/kr-ops'

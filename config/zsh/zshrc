@@ -34,6 +34,12 @@ POWERLEVEL9K_CUSTOM_GIT_BRANCH="zsh_git_branch"
 POWERLEVEL9K_CUSTOM_GIT_BRANCH_BACKGROUND="211"
 POWERLEVEL9K_CUSTOM_GIT_BRANCH_FOREGROUND="black"
 
+# Setup direnv -- hook it into the shell
+eval "$(direnv hook zsh)"
+
+# Setup poetry autocomplete
+fpath+=~/.zfunc
+
 # Custom Functions
 zsh_git_branch() {
   out=$(git branch | grep \* | cut -c3-) >& /dev/null;
@@ -210,7 +216,7 @@ ptest() {
     echo "Please provide the name of the module you want to test"
   fi
   if [ $2 != "" ]; then
-    ./pants test $1\:test --test-junit-test="$2" $3
+    pants test $1\:test --test-junit-test="$2" $3
     return
   fi
 
@@ -246,6 +252,7 @@ fixfms() {
 
 runbt() {
   export BIGTABLE_EMULATOR_HOST=localhost:8086
+  #$(gcloud beta emulators bigtable env-init)
   gcloud beta emulators bigtable start
 }
 
@@ -309,11 +316,21 @@ dkp() {
   docker push gcr.io/$repo/$image
 }
 
+drmi() {
+  docker rmi -f $(docker images -q)
+}
+
 get_sha() {
   pushd ~/Development/$1 &> /dev/null
   sha=$(git rev-parse HEAD)
   echo $sha | cut -c 1-10
   popd &> /dev/null
+}
+
+
+pipu() {
+  pip uninstall $1 -y
+  pip install ~/Development/$1
 }
 
 # Fix too many files issue
@@ -323,10 +340,12 @@ source ~/.p10k.zsh
 
 # Unclear if i need this
 # Base16 Shell
- BASE16_SHELL="$HOME/.config/base16-shell/"
+BASE16_SHELL="$HOME/.config/base16-shell/"
  [ -n "$PS1" ] && \
      [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
          eval "$("$BASE16_SHELL/profile_helper.sh")"
+# set base16 theme
+base16_material-darker
 
 
 # The next line updates PATH for the Google Cloud SDK.
@@ -334,3 +353,5 @@ if [ -f '/Users/mshelley/Development/google-cloud-sdk/path.zsh.inc' ]; then . '/
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/mshelley/Development/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mshelley/Development/google-cloud-sdk/completion.zsh.inc'; fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

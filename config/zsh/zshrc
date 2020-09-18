@@ -34,6 +34,9 @@ POWERLEVEL9K_CUSTOM_GIT_BRANCH="zsh_git_branch"
 POWERLEVEL9K_CUSTOM_GIT_BRANCH_BACKGROUND="211"
 POWERLEVEL9K_CUSTOM_GIT_BRANCH_FOREGROUND="black"
 
+# Put poetry on path
+PATH=$PATH:~/.poetry/bin
+
 # Setup direnv -- hook it into the shell
 eval "$(direnv hook zsh)"
 

@@ -76,8 +76,11 @@ let g:ale_linters = {
 \}
 let g:ale_fix_on_save = 1
 let g:airline#extensions#ale#enabled = 1 "show ale errors in airline
-"
-"
+
+""" vim-markdown-composer
+let g:markdown_composer_open_browser = 0
+noremap :ComposerOpen <C-m>
+
 """ base16
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256

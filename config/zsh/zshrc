@@ -336,6 +336,10 @@ pipu() {
   pip install ~/Development/$1
 }
 
+find_big_dirs() {
+  du -k -h -d1 * | sort -h
+}
+
 # Fix too many files issue
 ftmf
 

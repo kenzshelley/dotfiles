@@ -1,3 +1,13 @@
+function! BuildComposer(info)
+  if a:info.status != 'unchanged' || a:info.force
+    if has('nvim')
+      !cargo build --release --locked
+    else
+      !cargo build --release --locked --no-default-features --features json-rpc
+    endif
+  endif
+endfunction
+
 call plug#begin('~/.local/share/nvim/plugged')
 
 " navigation
@@ -28,8 +38,8 @@ Plug 'scrooloose/nerdtree'
 Plug 'chriskempson/base16-vim' "color scheme
 Plug 'mhinz/vim-signify' "shows +/- for diffs
 
-" Coc
-"Plug 'kenzshelley/coc-python', {'do': 'yarn install --frozen-lockfile'}
 
+" Markdown preview
+Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 
 call plug#end()

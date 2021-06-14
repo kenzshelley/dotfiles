@@ -1,6 +1,7 @@
 brew 'docker'
 brew 'docker-machine'
 brew 'fzf'
+brew 'gh'
 brew 'kubectl'
 brew 'neovim'
 brew 'pipenv'

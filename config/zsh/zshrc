@@ -37,9 +37,6 @@ POWERLEVEL9K_CUSTOM_GIT_BRANCH_FOREGROUND="black"
 # Put poetry on path
 PATH=$PATH:~/.poetry/bin
 
-# Setup direnv -- hook it into the shell
-eval "$(direnv hook zsh)"
-
 # Setup poetry autocomplete
 fpath+=~/.zfunc
 
@@ -358,7 +355,6 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
          eval "$("$BASE16_SHELL/profile_helper.sh")"
 # set base16 theme
 base16_material-darker
-
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/mshelley/Development/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/mshelley/Development/google-cloud-sdk/path.zsh.inc'; fi

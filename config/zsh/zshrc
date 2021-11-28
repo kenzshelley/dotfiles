@@ -134,6 +134,7 @@ alias grafp='gra && gfp'
 alias tap='touch'
 alias pssh='ssh pi@192.168.1.69'
 alias nv='nvim'
+alias branch='git branch --show-current'
 
 test_gfp() {
   branch=$(git branch | grep \* | cut -c3-)
@@ -340,6 +341,10 @@ find_big_dirs() {
   du -k -h -d1 * | sort -h
 }
 
+clean_diff() {
+  pbpaste | grep -v "Merge pull request" | grep -v square-console.sqprod | grep -v '@signal-lib-updater' | pbcopy
+}
+
 # Fix too many files issue
 ftmf
 
@@ -361,7 +366,14 @@ if [ -f '/Users/mshelley/Development/google-cloud-sdk/path.zsh.inc' ]; then . '/
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/mshelley/Development/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mshelley/Development/google-cloud-sdk/completion.zsh.inc'; fi
 
+# Configure path for pyenv
+eval "$(pyenv init --path)"
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

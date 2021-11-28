@@ -9,5 +9,8 @@ brew 'the_silver_searcher'
 brew 'tmux'
 brew 'zplug'
 
+cask 'git-credential-manager-core'
 cask 'rectangle'
 cask 'spotify'
+
+tap 'microsoft/git'

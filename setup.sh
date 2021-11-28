@@ -1,20 +1,20 @@
 # Set zsh as shell
-chsh -s /bin/zsh
+if [ $SHELL != "/bin/zsh" ]; then
+  echo "Changing shell to zsh"
+  chsh -s /bin/zsh
+fi
 
 # Figure out if this is for work
-if [ -z $1 ]
-then
+if [ -z $1 ]; then
     IS_WORK=""
-elif [ $1 == "--work" ] 
-then
-    IS_WORK="yes"
+elif [ $1 == "--work" ]; then
+    export IS_WORK="yes"
 else
     echo "Invalid option $1. Pass no args, or the --work flag."
 fi
 
 # Install brew
-if [ -z $(which brew) ]
-then
+if [ -z $(which brew) ]; then
     echo "Installing brew"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/mackenzie/.zprofile
@@ -24,18 +24,18 @@ fi
 # Install brew things
 brew bundle --file Brewfile
 
-if [ ! -z $IS_WORK ]
-then
+if [ ! -z $IS_WORK ]; then
     echo "Installing work specific stuff"
     brew bundle --file Brewfile.work
     ./setup_work.sh
+    # Create a flag file indicating that work stuff should be loaded in zshrc
+    tap ~/.work
 else
     echo "Skipping work specific stuff"
 fi
 
 # Install powerline fonts
-if [ ! -d ./fonts ]
-then
+if [ ! -d ./fonts ]; then
     echo "installing fonts"
     git clone https://github.com/powerline/fonts.git
     pushd fonts
@@ -44,14 +44,16 @@ then
 fi
 
 # Install rust for vim-markdown-composer if necessary
-if [ -z $(which cargo) ]
-then 
+if [ -z $(which cargo) ]; then 
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
 # Install vim plug
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+if [ -f "~/.local/share/nvim/site/autoload/plug.vim" ]; then
+  echo "Installing vim plug"
+  sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+fi
 
 # Link dotfiles
 ln -fs $(pwd)/config/vim/.vimrc ~/.vimrc

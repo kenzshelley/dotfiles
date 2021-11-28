@@ -1,5 +1,7 @@
 # Square stuff (first so my stuff overrides)
-source ~/Development/config_files/square/zshrc
+if [ -f ~/.work ]; then
+  source ~/Development/config_files/square/zshrc
+fi
 
 # Put python3 symlinks ahead of system on path
 PATH=/usr/local/opt/python/libexec/bin:$PATH

@@ -25,6 +25,7 @@ Plug 'vim-python/python-syntax', { 'for': 'python' }
 
 " usability
 Plug 'tpope/vim-fugitive' "git in vim
+Plug 'tpope/vim-rhubarb' "enable Gbrowse command from vim-fugitive
 Plug 'tpope/vim-surround' "easy to surround things w/ brackets etc
 Plug 'tpope/vim-repeat' "repeat plugin commands with .
 Plug 'vim-airline/vim-airline'

@@ -26,8 +26,6 @@ export SAVEHIST=100000
 #bindkey -v
 ## make reverse search work in vim mode
 bindkey '^R' history-incremental-pattern-search-backward
-autoload -U compinit && compinit
-zmodload -i zsh/complist
 
 
 # Custom Powerline Settings
@@ -376,3 +374,21 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Completion setup
+# The following lines were added by compinstall
+zstyle ':completion:*' completer _expand _complete _ignored _approximate
+zstyle ':completion:*' completions 1
+zstyle ':completion:*' glob 1
+zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]} r:|[._-]=** r:|=**' 'm:{[:lower:]}={[:upper:]}' 'm:{[:lower:]}={[:upper:]}' 'm:{[:lower:]}={[:upper:]}'
+zstyle ':completion:*' max-errors 4 numeric
+zstyle ':completion:*' substitute 1
+zstyle :compinstall filename '/Users/mackenzie/.zshrc'
+
+# enables cding without specifying full root path
+setopt autocd
+
+autoload -Uz compinit && compinit
+zmodload -i zsh/complist
+compinit
+# End of lines added by compinstall

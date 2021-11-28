@@ -28,7 +28,8 @@ export SAVEHIST=100000
 bindkey '^R' history-incremental-pattern-search-backward
 autoload -U compinit && compinit
 zmodload -i zsh/complist
-#eval $(thefuck --alias)
+
+
 # Custom Powerline Settings
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(custom_git_branch)

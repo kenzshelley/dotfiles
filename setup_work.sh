@@ -9,3 +9,6 @@ rm -r ~/Development/google-cloud-sdk.tar.gz
 # setup google application default creds
 gcloud auth application-default login
 export GOOGLE_APPLICATION_CREDENTIALS=/Users/mshelley/.config/gcloud/application_default_credentials.json
+
+# Setup docker
+docker-machine create --driver virtualbox default

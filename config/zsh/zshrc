@@ -82,7 +82,12 @@ pr_warning() {
 }
 
 # zplug
-export ZPLUG_HOME=/opt/homebrew/opt/zplug
+if [[ `uname -m` == 'arm64' ]]; then
+  export ZPLUG_HOME=/opt/homebrew/opt/zplug
+else
+  export ZPLUG_HOME=/usr/local/opt/zplug
+fi
+
 source $ZPLUG_HOME/init.zsh
 
 # bhilburn version has a fucked up commit that breaks everything

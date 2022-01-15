@@ -17,7 +17,7 @@ fi
 if [ -z $(which brew) ]; then
     echo "Installing brew"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/mackenzie/.zprofile
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
@@ -46,16 +46,25 @@ fi
 # Install rust for vim-markdown-composer if necessary
 if [ -z $(which cargo) ]; then 
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  source $HOME/.cargo/env
 fi
 
 # Install vim plug
-if [ -f "~/.local/share/nvim/site/autoload/plug.vim" ]; then
+if [ ! -f "~/.local/share/nvim/site/autoload/plug.vim" ]; then
   echo "Installing vim plug"
   sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 fi
 
+# Install base16 shell
+if [ ! -f "~/.config/base16_shell" ]; then
+  echo "Installing base16 shell"
+  git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
+fi
+
+
 # Link dotfiles
+mkdir -p ~/.config
 ln -fs $(pwd)/config/vim/.vimrc ~/.vimrc
 ln -fs $(pwd)/config/zsh/zshrc ~/.zshrc
 ln -fs $(pwd)/config/tmux/.tmux.conf ~/.tmux.conf

@@ -16,7 +16,7 @@ Plug 'christoomey/vim-tmux-navigator'
 " completion
 Plug 'jiangmiao/auto-pairs' " auto add brackets etc.
 Plug 'tpope/vim-commentary' " make it easy to comment blocks
-Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'dense-analysis/ale' " linting
 

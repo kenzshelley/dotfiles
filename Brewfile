@@ -10,6 +10,7 @@ brew 'tmux'
 brew 'zplug'
 
 cask 'git-credential-manager-core'
+cask 'iterm2'
 cask 'rectangle'
 cask 'spotify'
 

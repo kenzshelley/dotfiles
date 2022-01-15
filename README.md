@@ -12,7 +12,7 @@
 
 git-credential-manager handles storing your github personal access token in mac os keychain.
 The first time you clone a private repo / try to push to a protected repo, a GUI will prompt you to enter the access token.
-You can fine the old access token in your password manager, or just create a new one on GH.
+You can find the old access token in your password manager, or just create a new one on GH.
 
 ## Peripherals Setup
 

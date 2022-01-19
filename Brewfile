@@ -9,6 +9,7 @@ brew 'the_silver_searcher'
 brew 'tmux'
 brew 'zplug'
 
+cask 'alfred'
 cask 'git-credential-manager-core'
 cask 'iterm2'
 cask 'rectangle'

@@ -105,7 +105,7 @@ zplug install
 zplug load
 
 # Git Aliases -- Keep these below zplug so that my aliases overwrite plugins'.
-alias gpr='~/Development/config_files/bin/gpr' # broke this somehow, too lazy to fix, don't want to reinstall cause worried will break other shit
+alias gpr='gh pr create --web' 
 alias vim='mvim -v'
 # alias vi='mvim -v'
 alias vi='nvim'

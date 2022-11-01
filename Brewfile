@@ -12,6 +12,7 @@ brew 'zplug'
 cask 'alfred'
 cask 'git-credential-manager-core'
 cask 'iterm2'
+cask 'obsidian'
 cask 'rectangle'
 cask 'spotify'
 

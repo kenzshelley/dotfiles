@@ -14,6 +14,7 @@ cask 'git-credential-manager-core'
 cask 'iterm2'
 cask 'obsidian'
 cask 'rectangle'
+cask 'rocket'
 cask 'spotify'
 
 tap 'microsoft/git'

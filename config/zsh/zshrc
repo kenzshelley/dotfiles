@@ -52,6 +52,7 @@ zsh_git_branch() {
 
   echo $out
 }
+
 git_branch_current() {
   git rev-parse --abbrev-ref HEAD
 }

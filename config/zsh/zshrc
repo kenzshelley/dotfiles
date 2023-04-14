@@ -398,3 +398,35 @@ autoload -Uz compinit && compinit
 zmodload -i zsh/complist
 compinit
 # End of lines added by compinstall
+
+# Created by `pipx` on 2023-03-02 18:46:48
+export PATH="$PATH:/Users/mshelley/.local/bin"
+
+# Enable cloning from github
+alias git_certs='watch -n 240 "ssh -T org-49461806@github.com;ssh-add -D;ssh-add -K"' 
+
+agent() {
+    printf "${red}${bold}Make sure you are using the VPN${normal}${nc}\n"
+    if [ -z "$1" ]; then
+        echo "No machine given: exiting"
+        return 1
+    elif [[ "$1" == 'help' ]]; then
+        echo "usage: agent MACHINE_NAME PROJECT"
+    else
+        host="$1"
+    fi
+
+    if [ -z "$2" ]; then
+        PROJECT=$(gcloud config get-value project 2>/dev/null)
+        echo "No project zone given, using default: $PROJECT"
+    else
+        PROJECT_ZONE="$2"
+        echo "Using project: $PROJECT"
+    fi
+
+    echo "Setting up agent forwarding"
+    gcloud compute ssh --ssh-flag="-A" --internal-ip $host --project $PROJECT
+}
+
+alias gcloud_auth="gcloud auth login; gcloud auth application-default login; gcloud auth configure-docker"
+PATH="${PATH}:${HOME}/.local/bin"

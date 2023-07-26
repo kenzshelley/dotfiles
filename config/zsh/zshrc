@@ -20,13 +20,8 @@ export HISTFILE=$HOME/.zsh_history
 export HISTSIZE=100000
 export SAVEHIST=100000
 
-# set lpass timeout LPASS_AGENT_TIMEOUT=0; # 1 day in seconds
-
-## vim mode
-#bindkey -v
 ## make reverse search work in vim mode
 bindkey '^R' history-incremental-pattern-search-backward
-
 
 # Custom Powerline Settings
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)

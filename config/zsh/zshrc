@@ -198,22 +198,6 @@ bm() {
   echo "finished"
 }
 
-fixfms() {
-  git fetch
-  gco origin/master signal-lib/src/main/resources/fms/*
-  git add signal-lib/src/main/resources/fms/*
-  git commit --fixup head
-  git rebase -i --autosquash head~2
-  gco master && git pull && gco - && git rebase master
-  pants run signal-lib/src/main/java:feature_generator
-}
-
-undo-fms() {
-  gco origin/master signal-lib/src/main/resources/fms/acc.yaml
-  gco origin/master signal-lib/src/main/resources/fms/feature-ext.yaml
-  gco origin/master signal-lib/src/main/resources/fms/signal-acc.yaml
-}
-
 runbt() {
   export BIGTABLE_EMULATOR_HOST=localhost:8086
   #$(gcloud beta emulators bigtable env-init)

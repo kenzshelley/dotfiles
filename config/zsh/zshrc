@@ -181,43 +181,6 @@ gcom() {
   gco mshelley."$1"
 }
 
-inew() {
-  CUR_DIR_NAME=$(basename $(pwd))
-  PROJ_DIR=~/Development/$CUR_DIR_NAME/squarepants/idea/
-  OLD_VERSION=$(cat $PROJ_DIR/.version)
-  NEW_VERSION=$(($OLD_VERSION + 1))
-
-  OLD_NAME="$CUR_DIR_NAME-$OLD_VERSION"
-  NEW_NAME="$CUR_DIR_NAME-$NEW_VERSION"
-
-  rm -rf $PROJ_DIR/$OLD_NAME
-  ./pants idea beacon:: connectedusers:: common-cloud:: foundry:: frisky:: howdah:: riskarbiter/src/main:: riskml-common:: replaying-client:: santa:: signal-lib::  signalsmith:: --idea-project-name=$NEW_NAME
-
-  echo $NEW_VERSION > $PROJ_DIR/.version
-}
-
-iupdate() {
-  CUR_DIR_NAME=$(basename $(pwd))
-  PROJ_DIR=~/Development/$CUR_DIR_NAME/squarepants/idea/
-  VERSION=$(cat $PROJ_DIR/.version)
-
-  NAME="$CUR_DIR_NAME-$VERSION"
-
-  pants idea beacon:: connectedusers:: common-cloud:: compliancepundit:: foundry:: frisky:: howdah:: riskarbiter/src/main:: riskml-common:: santa:: signal-lib:: signalsmith:: replaying-client:: --idea-project-name=$NAME
-}
-
-ptest() {
-  if [ -z $1 ]; then
-    echo "Please provide the name of the module you want to test"
-  fi
-  if [ $2 != "" ]; then
-    pants test $1\:test --test-junit-test="$2" $3
-    return
-  fi
-
-  ./pants test $1\:test $3
-}
-
 bm() {
   echo "updating main branch"
   gco $(get_main_branch)

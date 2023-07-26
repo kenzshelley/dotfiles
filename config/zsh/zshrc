@@ -57,10 +57,19 @@ git_branch_current() {
   git rev-parse --abbrev-ref HEAD
 }
 
+get_branches() {
+ branches=("${(@f)$(gb)}")
+}
+
+get_main_branch() {
+  git rev-parse --abbrev-ref origin/HEAD | cut -d '/' -f 2
+}
+
 delete_merged_branches() {
-  local branches=("${(@f)$(gb)}")
+  main_branch=$(get_main_branch)
+  get_branches
   for branch in $branches; do
-    if [[ "$branch" =~ "master" ]]; then
+    if [[ "$branch" =~ "$main_branch" ]]; then
       continue
     fi
     if [[ "$branch" =~ "$(git_branch_current)" ]]; then
@@ -107,12 +116,9 @@ zplug load
 
 # Git Aliases -- Keep these below zplug so that my aliases overwrite plugins'.
 alias gpr='gh pr create --web' 
-alias vim='mvim -v'
-# alias vi='mvim -v'
 alias vi='nvim'
 alias gl='git log'
-alias gb='git branch'
-alias gbv='git branch -vv'
+alias gb='git branch -vv'
 alias gco='git checkout'
 alias gs='git status'
 alias gd='git diff'
@@ -122,9 +128,8 @@ alias gfppr='pr_warning && git push -f origin HEAD:$(git branch | grep \* | cut 
 alias gfp='pr_warning && git push -f origin HEAD:$(git branch | grep \* | cut -c3-)'
 alias gp='pr_warning && git push origin HEAD:$(git branch | grep \* | cut -c3-)'
 alias gbd='delete_merged_branches'
-alias gupdate='gco master && git pull && gco - && git rebase master'
-alias gupdate-i='gco master && git pull && gco - && git rebase -i master'
-alias gc='gco master && git pull && gbd'
+alias gupdate='gco $(get_main_branch) && git pull && gco - && git rebase $(get_main_branch)'
+alias gc='gco $(get_main_branch) && git pull && gbd'
 alias k='kochiku'
 alias ku='kubectl'
 alias gra='git commit -a --fixup head && git rebase -i --autosquash head~2'
@@ -132,23 +137,11 @@ alias grap='gra && gfp'
 alias deploys='python3 ~/Development/risksys/deploysneeded.py'
 alias sourcez='source ~/.zshrc'
 alias editz='nv ~/Development/dotfiles/config/zsh/zshrc'
-alias fms='pants run signal-lib/src/main/java:feature_generator'
 alias grafp='gra && gfp'
-#alias pants='./pants'
 alias tap='touch'
 alias pssh='ssh pi@192.168.1.69'
 alias nv='nvim'
 alias branch='git branch --show-current'
-
-test_gfp() {
-  branch=$(git branch | grep \* | cut -c3-)
-  echo $branch
-  #pr_warning && git push -f origin head:$branch
-}
-
-g-to-master() {
-  git checkout origin/master "$1"
-}
 
 gcob() {
   zparseopts -E -A args -- t: j:
@@ -156,7 +149,7 @@ gcob() {
   jira=$args[-j]
 
   if [ -z $target ]; then
-    target=master
+    target=$(get_main_branch)
   fi
 
   if [ -z $jira ]; then
@@ -173,25 +166,19 @@ gcomb() {
   jira=$args[-j]
 
   if [ -z $target ]; then
-    target=master
+    target=$(get_main_branch)
   fi
 
   if [ -z $jira ]; then
-    gco master && gco --track -b mshelley."$1" $target
+    gco $(get_main_branch) && gco --track -b mshelley."$1" $target
     return
   fi
 
-  gco master && gco --track -b mshelley."$jira"."$1" $target
+  gco $(get_main_branch) && gco --track -b mshelley."$jira"."$1" $target
 }
 
 gcom() {
   gco mshelley."$1"
-}
-
-undo-fms() {
-  gco origin/master signal-lib/src/main/resources/fms/acc.yaml
-  gco origin/master signal-lib/src/main/resources/fms/feature-ext.yaml
-  gco origin/master signal-lib/src/main/resources/fms/signal-acc.yaml
 }
 
 inew() {
@@ -232,8 +219,8 @@ ptest() {
 }
 
 bm() {
-  echo "updating master"
-  gco master
+  echo "updating main branch"
+  gco $(get_main_branch)
   git pull
 
   echo "updating branches"
@@ -241,7 +228,7 @@ bm() {
   for branch in $branches; do
     echo "updating $branch"
     gco $branch
-    git rebase master
+    git rebase $(get_main_branch)
     gco -
   done
 
@@ -256,6 +243,12 @@ fixfms() {
   git rebase -i --autosquash head~2
   gco master && git pull && gco - && git rebase master
   pants run signal-lib/src/main/java:feature_generator
+}
+
+undo-fms() {
+  gco origin/master signal-lib/src/main/resources/fms/acc.yaml
+  gco origin/master signal-lib/src/main/resources/fms/feature-ext.yaml
+  gco origin/master signal-lib/src/main/resources/fms/signal-acc.yaml
 }
 
 runbt() {

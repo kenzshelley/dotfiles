@@ -32,7 +32,6 @@ delete_merged_branches() {
     # check if the branch has been merged into main
     state=$(gh pr view $branch_name --json state --jq .state) 2> /dev/null
     if [[ "$state" == "MERGED" ]]; then
-      echo "deleting $branch_name"
       git branch -D $branch_name
     else 
       echo "Skipping unmerged branch $branch_name"

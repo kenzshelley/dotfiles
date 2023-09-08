@@ -2,6 +2,7 @@
 if [ -f ~/.work ]; then
   source ~/Development/config_files/square/zshrc
 fi
+source ~/Development/dotfiles/config/zsh/git_functions.sh
 
 # Put python3 symlinks ahead of system on path
 PATH=/usr/local/opt/python/libexec/bin:$PATH
@@ -46,39 +47,6 @@ zsh_git_branch() {
   out=" $out";
 
   echo $out
-}
-
-git_branch_current() {
-  git rev-parse --abbrev-ref HEAD
-}
-
-get_branches() {
- branches=("${(@f)$(gb)}")
-}
-
-get_main_branch() {
-  git rev-parse --abbrev-ref origin/HEAD | cut -d '/' -f 2
-}
-
-delete_merged_branches() {
-  main_branch=$(get_main_branch)
-  get_branches
-  for branch in $branches; do
-    if [[ "$branch" =~ "$main_branch" ]]; then
-      continue
-    fi
-    if [[ "$branch" =~ "$(git_branch_current)" ]]; then
-      continue
-    fi
-    echo $branch
-
-    setopt shwordsplit
-    local array=($branch)
-    local branch_name=$array[1]
-    unsetopt shwordsplit
-
-    git branch -d $branch_name
-  done
 }
 
 pr_warning() {

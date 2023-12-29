@@ -16,5 +16,6 @@ cask 'obsidian'
 cask 'rectangle'
 cask 'rocket'
 cask 'spotify'
+cask 'todoist'
 
 tap 'microsoft/git'

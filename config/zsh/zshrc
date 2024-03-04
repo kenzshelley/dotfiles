@@ -266,17 +266,8 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
 # set base16 theme
 base16_material-darker
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/mshelley/Development/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/mshelley/Development/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/mshelley/Development/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mshelley/Development/google-cloud-sdk/completion.zsh.inc'; fi
-
-# Configure path for pyenv
-eval "$(pyenv init --path)"
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
+source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -333,3 +324,14 @@ agent() {
 
 alias gcloud_auth="gcloud auth login; gcloud auth application-default login; gcloud auth configure-docker"
 PATH="${PATH}:${HOME}/.local/bin"
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+ 
+# Adding libexec/bin to path
+export PATH=$PATH:$HOMEBREW_PREFIX/opt/python/libexec/bin
+
+# hermit in prompt
+function prompt_hermit() {
+  if [[ -n $HERMIT_ENV ]]; then
+    p10k segment -t "${${HERMIT_ENV:t}//\%/%%} 🐚"  -f blue
+  fi
+}

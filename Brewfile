@@ -8,6 +8,7 @@ brew 'reattach-to-user-namespace'
 brew 'the_silver_searcher'
 brew 'tmux'
 brew 'zplug'
+brew '1password-cli'
 
 cask 'alfred'
 cask 'git-credential-manager-core'

@@ -61,11 +61,8 @@ fi
 
 source $ZPLUG_HOME/init.zsh
 
-# bhilburn version has a fucked up commit that breaks everything
-#zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
 zplug "modules/utility", from:prezto
 zplug "modules/git", from:prezto
-#zplug "kenzshelley/powerlevel9k", use:powerlevel9k.zsh-theme
 zplug "kenzshelley/branch-hider"
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "modules/history-substring-search", from:prezto

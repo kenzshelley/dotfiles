@@ -2,3 +2,5 @@ brew 'docker'
 brew 'docker-machine'
 brew 'kubectl'
 brew 'observ-cli'
+
+cask 'jetbrains-toolbox'

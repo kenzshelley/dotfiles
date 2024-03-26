@@ -4,8 +4,6 @@ if [ -f ~/.work ]; then
 fi
 source ~/Development/dotfiles/config/zsh/git_functions.sh
 
-# Put python3 symlinks ahead of system on path
-PATH=/usr/local/opt/python/libexec/bin:$PATH
 # Put homebrew ahead of system on path PATH=/user/local/bin:$PATH
 # General
 export VISUAL='nvim'
@@ -73,6 +71,7 @@ zplug "zsh-users/zsh-syntax-highlighting"
 zplug "modules/history-substring-search", from:prezto
 zplug "modules/prompt", from:prezto
 zplug "romkatv/powerlevel10k", as:theme, depth:1
+zplug chriskempson/base16-shell, from:github
 
 zplug install
 zplug load
@@ -257,13 +256,6 @@ ftmf
 
 source ~/.p10k.zsh
 
-# Unclear if i need this
-# Base16 Shell
-BASE16_SHELL="$HOME/.config/base16-shell/"
- [ -n "$PS1" ] && \
-     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-         eval "$("$BASE16_SHELL/profile_helper.sh")"
-# set base16 theme
 base16_material-darker
 
 source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"

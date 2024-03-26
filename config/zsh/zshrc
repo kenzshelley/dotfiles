@@ -1,8 +1,16 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Square stuff (first so my stuff overrides)
 if [ -f ~/.work ]; then
   source ~/Development/config_files/square/zshrc
 fi
 source ~/Development/dotfiles/config/zsh/git_functions.sh
+source ~/Development/dotfiles/config/zsh/py_env_functions.sh
 
 # Put homebrew ahead of system on path PATH=/user/local/bin:$PATH
 # General
@@ -23,11 +31,11 @@ export SAVEHIST=100000
 bindkey '^R' history-incremental-pattern-search-backward
 
 # Custom Powerline Settings
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(custom_git_branch)
-POWERLEVEL9K_CUSTOM_GIT_BRANCH="zsh_git_branch"
-POWERLEVEL9K_CUSTOM_GIT_BRANCH_BACKGROUND="211"
-POWERLEVEL9K_CUSTOM_GIT_BRANCH_FOREGROUND="black"
+#POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
+#POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(custom_git_branch)
+#POWERLEVEL9K_CUSTOM_GIT_BRANCH="zsh_git_branch"
+#POWERLEVEL9K_CUSTOM_GIT_BRANCH_BACKGROUND="211"
+#POWERLEVEL9K_CUSTOM_GIT_BRANCH_FOREGROUND="black"
 
 # Put poetry on path
 PATH=$PATH:~/.poetry/bin
@@ -68,7 +76,7 @@ zplug "zsh-users/zsh-syntax-highlighting"
 zplug "modules/history-substring-search", from:prezto
 zplug "modules/prompt", from:prezto
 zplug "romkatv/powerlevel10k", as:theme, depth:1
-zplug chriskempson/base16-shell, from:github
+zplug "chriskempson/base16-shell", from:github
 
 zplug install
 zplug load
@@ -324,3 +332,6 @@ function prompt_hermit() {
     p10k segment -t "${${HERMIT_ENV:t}//\%/%%} 🐚"  -f blue
   fi
 }
+
+# To customize prompt, run `p10k configure` or edit ~/Development/dotfiles/config/zsh/.p10k.zsh.
+[[ ! -f ~/Development/dotfiles/config/zsh/.p10k.zsh ]] || source ~/Development/dotfiles/config/zsh/.p10k.zsh

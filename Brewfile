@@ -1,3 +1,4 @@
+brew 'autoenv'
 brew 'fzf'
 brew 'gh'
 brew 'kubectl'

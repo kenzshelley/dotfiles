@@ -326,6 +326,7 @@ export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 # Adding libexec/bin to path
 export PATH=$PATH:$HOMEBREW_PREFIX/opt/python/libexec/bin
 
+
 # hermit in prompt
 function prompt_hermit() {
   if [[ -n $HERMIT_ENV ]]; then
@@ -343,3 +344,8 @@ eval "$(test -x $HERMIT_ROOT_BIN && $HERMIT_ROOT_BIN shell-hooks --print --zsh)"
 
 source /opt/homebrew/opt/autoenv/activate.sh
 export AUTOENV_ENABLE_LEAVE="non_empty"
+PATH="${PATH}:${HOME}/.local/bin"
+export PIPX_DEFAULT_PYTHON=python3.10
+ 
+# Adding libexec/bin to path
+export PATH=$PATH:/opt/homebrew/opt/python@3/libexec/bin

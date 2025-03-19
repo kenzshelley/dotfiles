@@ -12,6 +12,9 @@ fi
 source ~/Development/dotfiles/config/zsh/git_functions.sh
 source ~/Development/dotfiles/config/zsh/py_env_functions.sh
 
+# Setup Goose stuff
+source ~/Development/dotfiles/config/zsh/goose.sh
+
 # Put homebrew ahead of system on path PATH=/user/local/bin:$PATH
 # General
 export VISUAL='nvim'

@@ -108,7 +108,7 @@ alias grafp='gra && gfp'
 alias tap='touch'
 alias pssh='ssh pi@192.168.1.69'
 alias nv='nvim'
-alias branch='git branch --show-current'
+alias branch='git branch --show-current | tr -d "\n"'
 
 gcob() {
   zparseopts -E -A args -- t: j:
@@ -349,3 +349,5 @@ export PIPX_DEFAULT_PYTHON=python3.10
  
 # Adding libexec/bin to path
 export PATH=$PATH:/opt/homebrew/opt/python@3/libexec/bin
+
+p10k finalize

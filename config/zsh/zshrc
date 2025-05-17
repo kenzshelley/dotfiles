@@ -5,12 +5,20 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Set programming directory
+
+if [ -f ~/.work ]; then
+  HOME="/Users/mshelley/Development"
+else 
+  HOME="/Users/mackenzie/programming"
+fi
+
 # Square stuff (first so my stuff overrides)
 if [ -f ~/.work ]; then
-  source ~/Development/config_files/square/zshrc
+  source "$HOME/dotfiles/config_files/square/zshrc"
 fi
-source ~/Development/dotfiles/config/zsh/git_functions.sh
-source ~/Development/dotfiles/config/zsh/py_env_functions.sh
+source "$HOME/dotfiles/config/zsh/git_functions.sh"
+source "$HOME/dotfiles/config/zsh/py_env_functions.sh"
 
 # Setup Goose stuff
 source ~/Development/dotfiles/config/zsh/goose.sh
@@ -263,11 +271,7 @@ clean_diff() {
 ftmf
 
 source ~/.p10k.zsh
-
 base16_material-darker
-
-source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
-source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

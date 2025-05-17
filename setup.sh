@@ -36,11 +36,7 @@ fi
 
 # Install powerline fonts
 if [ ! -d ./fonts ]; then
-    echo "installing fonts"
-    git clone https://github.com/powerline/fonts.git
-    pushd fonts
-    ./install.sh
-    popd fonts
+    ./install_fonts.sh
 fi
 
 # Install rust for vim-markdown-composer if necessary

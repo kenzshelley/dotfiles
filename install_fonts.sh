@@ -1,4 +1,3 @@
-
 ROBOTO_MONO_LINK="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/RobotoMono.zip"
 
 echo "✅ Downloading and installing Roboto Mono fonts from $ROBOTO_MONO_LINK..."

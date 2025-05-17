@@ -6,19 +6,18 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # Set programming directory
-
 if [ -f ~/.work ]; then
-  HOME="/Users/mshelley/Development"
+  DEV_HOME="/Users/mshelley/Development"
 else 
-  HOME="/Users/mackenzie/programming"
+  DEV_HOME="/Users/mackenzie/programming"
 fi
 
 # Square stuff (first so my stuff overrides)
 if [ -f ~/.work ]; then
-  source "$HOME/dotfiles/config_files/square/zshrc"
+  source "$DEV_HOME/dotfiles/config_files/square/zshrc"
 fi
-source "$HOME/dotfiles/config/zsh/git_functions.sh"
-source "$HOME/dotfiles/config/zsh/py_env_functions.sh"
+source "$DEV_HOME/dotfiles/config/zsh/git_functions.sh"
+source "$DEV_HOME/dotfiles/config/zsh/py_env_functions.sh"
 
 # Setup Goose stuff
 source ~/Development/dotfiles/config/zsh/goose.sh

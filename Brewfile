@@ -5,6 +5,7 @@ brew 'kubectl'
 brew 'neovim'
 brew 'node' # Needed for CoC
 brew 'hermit'
+brew 'pipx'
 brew 'pyenv'
 brew 'reattach-to-user-namespace'
 brew 'the_silver_searcher'

@@ -14,6 +14,7 @@ brew 'zplug'
 
 cask 'alfred'
 cask 'git-credential-manager-core'
+cask 'block-goose'
 cask 'iterm2'
 cask 'obsidian'
 cask 'rectangle'

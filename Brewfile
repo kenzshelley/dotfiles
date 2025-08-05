@@ -1,4 +1,5 @@
 brew 'autoenv'
+brew 'docker-compose'
 brew 'fzf'
 brew 'gh'
 brew 'kubectl'

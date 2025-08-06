@@ -45,13 +45,6 @@ if [ -z $(which cargo) ]; then
   source $HOME/.cargo/env
 fi
 
-# Install vim plug
-if [ ! -f "$HOME/.local/share/nvim/site/autoload/plug.vim" ]; then
-  echo "Installing vim plug"
-  sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-fi
-
 # Install base16 shell
 if [ ! -d "$HOME/.config/base16-shell" ]; then
   echo "Installing base16 shell"

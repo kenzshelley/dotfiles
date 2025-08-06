@@ -1,6 +1,35 @@
 
 return {
-  -- Navigation
+  -- Completion
+  "jiangmiao/auto-pairs", -- auto add brackets etc.
+  "tpope/vim-commentary", -- make it easy to comment blocks
+  {
+    "neovim/nvim-lspconfig",
+    lazy = false, dependencies = {
+      -- main one
+      { "ms-jpq/coq_nvim", branch = "coq" },
+
+      -- 9000+ Snippets
+      { "ms-jpq/coq.artifacts", branch = "artifacts" },
+    },
+    init = function() 
+      vim.g.coq_settings = {
+        auto_start = true, -- start coq automatically
+        keymap = {
+          recommended = true, -- use recommended keymaps
+          jump_to_mark = '<C-j>',  -- Jump to next completion mark
+        },
+        display = {
+          preview = {
+            border = 'rounded',
+          }
+        }
+      }
+    end,
+  },
+  -- "dense-analysis/ale", -- linting
+
+  -- Navigation 
   {
     "christoomey/vim-tmux-navigator",
     cmd = {
@@ -13,42 +42,13 @@ return {
     },
     lazy = false,
     keys = {
-      { "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
-      { "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
-      { "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
-      { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
-      { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
+      { "<C-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
+      { "<C-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
+      { "<C-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
+      { "<C-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
+      { "<C-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
     },
   },
-
-  -- Completion
-  "jiangmiao/auto-pairs", -- auto add brackets etc.
-  "tpope/vim-commentary", -- make it easy to comment blocks
-  {
-    "neovim/nvim-lspconfig",
-    lazy = false,
-    dependencies = {
-      -- main one
-      { "ms-jpq/coq_nvim", branch = "coq" },
-
-      -- 9000+ Snippets
-      { "ms-jpq/coq.artifacts", branch = "artifacts" },
-    },
-    init = function() 
-      vim.g.coq_settings = {
-        auto_start = true, -- start coq automatically
-        keymap = {
-          recommended = true, -- use recommended keymaps
-        },
-        display = {
-          preview = {
-            border = 'rounded',
-          }
-        }
-      }
-    end,
-  },
-  -- "dense-analysis/ale", -- linting
 
   -- Usability
   "tpope/vim-fugitive", -- git in vim

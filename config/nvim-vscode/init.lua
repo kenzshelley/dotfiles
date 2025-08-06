@@ -77,17 +77,7 @@ vim.g.fzf_buffers_jump = 1
 vim.keymap.set('n', '<C-n>', ':NERDTreeToggle<CR>', { desc = 'Open nerd tree' })
 
 -- Enable language servers
---vim.lsp.enable('basedpyright')
-
-
--- Enable + configure python language server (basedpyright)
----- enable autocompletion
-
-
---local capabilities = require('cmp_nvim_lsp').default_capabilities()
---local capabilities = require('coq')
-
-
+---- Enable python language server
 require('lspconfig').basedpyright.setup({
   settings = {
     basedpyright = {
@@ -98,9 +88,11 @@ require('lspconfig').basedpyright.setup({
         typeCheckingMode = "basic",
       },
     }
+
   }
 })
 
+---- Configure LSP keybindings
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', {}),
   callback = function(ev)

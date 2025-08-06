@@ -48,18 +48,7 @@ return {
       }
     end,
   },
-  -- "neovim/nvim-lspconfig", -- Neovim language server config helper
-  -- {
-   --   "neoclide/coc.nvim",
-   --   branch = "release"
-   -- },
   -- "dense-analysis/ale", -- linting
-
-  -- Python
-  -- {
-  --   "vim-python/python-syntax",
-  --   ft = "python" -- lazy load for python files only
-  -- },
 
   -- Usability
   "tpope/vim-fugitive", -- git in vim

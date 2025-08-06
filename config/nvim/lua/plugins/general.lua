@@ -14,10 +14,10 @@ return {
     },
     init = function() 
       vim.g.coq_settings = {
-        auto_start = true, -- start coq automatically
+        auto_start = 'shut-up', -- start coq automatically
         keymap = {
           recommended = true, -- use recommended keymaps
-          jump_to_mark = '<C-j>',  -- Jump to next completion mark
+          jump_to_mark = '<C-m>',  -- Jump to next completion mark
         },
         display = {
           preview = {
@@ -27,7 +27,6 @@ return {
       }
     end,
   },
-  -- "dense-analysis/ale", -- linting
 
   -- Navigation 
   {

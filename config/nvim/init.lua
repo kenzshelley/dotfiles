@@ -55,19 +55,11 @@ vim.keymap.set('i', '{<CR>', '{<CR>}<C-o>O', { desc = 'Auto-format braces with n
 vim.keymap.set('n', '<left>', '<<', { desc = 'Indent line left' })
 vim.keymap.set('n', '<right>', '>>', { desc = 'Indent line right' })
 
--- Navigation: Switch split windows quickly
--- vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Move to left window' })
--- vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Move to bottom window' })
--- vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Move to top window' })
--- vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Move to right window' })
 
 -- Base16 
--- Check if ~/.vimrc_background exists and source it
+vim.g.base16colorspace = 256
+vim.cmd('colorscheme base16-material') 
 local vimrc_bg = vim.fn.expand("~/.vimrc_background")
-if vim.fn.filereadable(vimrc_bg) == 1 then
-  vim.g.base16colorspace = 256
-  vim.cmd("source " .. vimrc_bg)
-end
 
 -- fzf settings
 ---- ctrl+p to open file browser (Files command)

@@ -25,6 +25,8 @@ vim.opt.clipboard   = "unnamed"  -- use system clipboard for yankj/paste (suppor
 
 -- Searching
 vim.opt.incsearch   = true -- Show search matches as you type
+vim.opt.ignorecase  = true -- Ignore case when searching by default
+vim.opt.smartcase   = true -- Be smart when decdiding that a search is case-sensitive
 
 -- Editing
 vim.opt.showmatch   = true  -- Matching braces highlighting

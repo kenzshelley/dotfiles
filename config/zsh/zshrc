@@ -270,7 +270,7 @@ clean_diff() {
 ftmf
 
 source ~/.p10k.zsh
-base16_material-darker
+base16_material
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

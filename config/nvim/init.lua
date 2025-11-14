@@ -73,7 +73,9 @@ vim.keymap.set('n', '<C-n>', ':NERDTreeToggle<CR>', { desc = 'Open nerd tree' })
 -- Enable language servers
 ---- Enable python language server (only if not running in vscode)
 if not vim.g.vscode then
-  require('lspconfig').basedpyright.setup({
+  vim.lsp.config.basedpyright = {
+    cmd = {'basedpyright-langserver', '--stdio'},
+    filetypes = {'python'},
     settings = {
       basedpyright = {
         analysis = {
@@ -83,9 +85,9 @@ if not vim.g.vscode then
           typeCheckingMode = "basic",
         },
       }
-
     }
-  })
+  }
+  vim.lsp.enable('basedpyright')
 
   ---- Configure LSP keybindings
   vim.api.nvim_create_autocmd('LspAttach', {

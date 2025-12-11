@@ -362,3 +362,4 @@ export PIPX_DEFAULT_PYTHON=python3.10
 export PATH=$PATH:/opt/homebrew/opt/python@3/libexec/bin
 
 p10k finalize
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"

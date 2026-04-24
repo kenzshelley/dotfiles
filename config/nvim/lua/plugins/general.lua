@@ -68,4 +68,14 @@ return {
   -- Prettiness
   "chriskempson/base16-vim", -- color scheme
   "mhinz/vim-signify", -- shows +/- for diffs
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" },
+    ft = { "markdown" },
+    opts = {
+      html  = { enabled = false },
+      latex = { enabled = false },
+      yaml  = { enabled = false },
+    },
+  },
 }

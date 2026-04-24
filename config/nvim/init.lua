@@ -8,10 +8,11 @@ vim.g.airline_theme = "base16"
 require("config.lazy")
 
 -- Display settings
-vim.opt.hidden     = true   -- Hides annoying "no write since last change"
-vim.opt.number     = true   -- Show lines numbers
-vim.opt.ruler      = true   -- show cursor position
-vim.opt.signcolumn = "yes"  -- show sidebar
+vim.opt.hidden        = true   -- Hides annoying "no write since last change"
+vim.opt.number        = true   -- Show lines numbers
+vim.opt.ruler         = true   -- show cursor position
+vim.opt.signcolumn    = "yes"  -- show sidebar
+vim.opt.conceallevel  = 2      -- conceal markdown syntax (e.g. render links as text)
 
 -- Color scheme
 vim.cmd('syntax enable')   -- enable syntax highlighting 
@@ -38,6 +39,12 @@ vim.opt.softtabstop = 2     -- Number of spaces a <Tab> counts for in insert mod
 -- Filetype
 -- -- Let vim detect filetypes + load plugins and indent configs for specific file types
 vim.cmd('filetype plugin indent on')
+
+-- Enable treesitter highlighting for markdown (required by render-markdown.nvim)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function() vim.treesitter.start() end,
+})
 
 -- Key remaps
 vim.keymap.set('n', ';', ':', { desc = 'Semi colon opens command prompt' })

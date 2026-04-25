@@ -1,31 +1,30 @@
 
 return {
   -- Completion
-  "jiangmiao/auto-pairs", -- auto add brackets etc.
+  { "windwp/nvim-autopairs", event = "InsertEnter", config = true },
   "tpope/vim-commentary", -- make it easy to comment blocks
-  {
-    "neovim/nvim-lspconfig",
-    lazy = false, dependencies = {
-      -- main one
-      { "ms-jpq/coq_nvim", branch = "coq" },
+  { "neovim/nvim-lspconfig", lazy = false },
 
-      -- 9000+ Snippets
-      { "ms-jpq/coq.artifacts", branch = "artifacts" },
+  {
+    "saghen/blink.cmp",
+    version = "*",
+    opts = {
+      keymap = {
+        ["<Tab>"]   = { "select_next", "snippet_forward", "fallback" },
+        ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+        ["<CR>"]    = { "accept", "fallback" },
+        ["<C-e>"]   = { "hide" },
+        ["<C-space>"] = { "show" },
+      },
+      appearance = { nerd_font_variant = "mono" },
+      completion = {
+        documentation = { auto_show = true, auto_show_delay_ms = 200 },
+        ghost_text = { enabled = true },
+      },
+      sources = {
+        default = { "lsp", "path", "snippets", "buffer" },
+      },
     },
-    init = function() 
-      vim.g.coq_settings = {
-        auto_start = 'shut-up', -- start coq automatically
-        keymap = {
-          recommended = true, -- use recommended keymaps
-          jump_to_mark = '<C-m>',  -- Jump to next completion mark
-        },
-        display = {
-          preview = {
-            border = 'rounded',
-          }
-        }
-      }
-    end,
   },
 
   -- Navigation 

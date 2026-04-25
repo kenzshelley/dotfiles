@@ -24,7 +24,7 @@ fi
 # Install brew things
 brew bundle --file Brewfile
 
-if [ ! -z $IS_WORK ]; then
+if [ -n "$IS_WORK" ]; then
     echo "Installing work specific stuff"
     brew bundle --file Brewfile.work
     ./setup_work.sh
@@ -48,7 +48,22 @@ fi
 
 # Link dotfiles
 mkdir -p ~/.config
-ln -fs $(pwd)/config/zsh/zshrc ~/.zshrc
-ln -fs $(pwd)/config/tmux/tmux.conf ~/.tmux.conf
-ln -fs $(pwd)/config/nvim ~/.config/nvim
-ln -fs $(pwd)/config/zsh/.p10k.zsh ~/.p10k.zsh
+
+link() {
+    local src="$1" dst="$2"
+    if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+        return
+    fi
+    if [ -e "$dst" ] && [ ! -L "$dst" ]; then
+        echo "WARNING: $dst exists and is not a symlink — skipping. Move it manually first."
+        return
+    fi
+    ln -fs "$src" "$dst"
+    echo "Linked $dst -> $src"
+}
+
+DOTFILES="$(pwd)"
+link "$DOTFILES/config/zsh/zshrc"     ~/.zshrc
+link "$DOTFILES/config/tmux/tmux.conf" ~/.tmux.conf
+link "$DOTFILES/config/nvim"           ~/.config/nvim
+link "$DOTFILES/config/zsh/.p10k.zsh" ~/.p10k.zsh

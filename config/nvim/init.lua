@@ -68,11 +68,10 @@ vim.g.base16colorspace = 256
 vim.cmd('colorscheme base16-material') 
 local vimrc_bg = vim.fn.expand("~/.vimrc_background")
 
--- fzf settings
----- ctrl+p to open file browser (Files command)
-vim.keymap.set('n', '<C-p>', ':Files<CR>', { desc = 'Open FZF file picker' })
----- Jump to existing buffer if file is already open 
-vim.g.fzf_buffers_jump = 1 
+-- fzf-lua settings
+vim.keymap.set('n', '<C-p>', require('fzf-lua').files,     { desc = 'FZF files' })
+vim.keymap.set('n', '<C-f>', require('fzf-lua').live_grep, { desc = 'FZF live grep' })
+vim.keymap.set('n', '<C-b>', require('fzf-lua').buffers,   { desc = 'FZF buffers' }) 
 
 -- Nerdtree
 vim.keymap.set('n', '<C-n>', ':NERDTreeToggle<CR>', { desc = 'Open nerd tree' })

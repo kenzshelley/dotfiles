@@ -57,11 +57,10 @@ return {
   "vim-airline/vim-airline",
   "vim-airline/vim-airline-themes",
   -- "mhinz/vim-grepper",
-  "junegunn/fzf.vim",
   {
-    "junegunn/fzf",
-    dir = "~/.fzf",
-    build = "./install --all"
+    "ibhagwan/fzf-lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = { winopts = { preview = { default = "bat" } } },
   },
   "scrooloose/nerdtree",
 

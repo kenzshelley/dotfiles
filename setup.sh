@@ -39,12 +39,6 @@ if [ ! -d ./fonts ]; then
     ./install_fonts.sh
 fi
 
-# Install rust for vim-markdown-composer if necessary
-if [ -z $(which cargo) ]; then
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-  source $HOME/.cargo/env
-fi
-
 # Install base16 shell
 if [ ! -d "$HOME/.config/base16-shell" ]; then
   echo "Installing base16 shell"
@@ -54,7 +48,6 @@ fi
 
 # Link dotfiles
 mkdir -p ~/.config
-ln -fs $(pwd)/config/vim/.vimrc ~/.vimrc
 ln -fs $(pwd)/config/zsh/zshrc ~/.zshrc
 ln -fs $(pwd)/config/tmux/tmux.conf ~/.tmux.conf
 ln -fs $(pwd)/config/nvim ~/.config/nvim

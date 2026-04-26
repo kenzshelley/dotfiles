@@ -39,6 +39,12 @@ if [ ! -d ./fonts ]; then
     ./install_fonts.sh
 fi
 
+# Install TPM (tmux plugin manager)
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+  echo "Installing TPM"
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
 # Install base16 shell
 if [ ! -d "$HOME/.config/base16-shell" ]; then
   echo "Installing base16 shell"

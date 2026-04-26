@@ -202,19 +202,15 @@ zstyle :compinstall filename '/Users/mackenzie/.zshrc'
 # enables cding without specifying full root path
 setopt autocd
 
-autoload -Uz compinit && compinit
+autoload -Uz compinit
 zmodload -i zsh/complist
 compinit
 # End of lines added by compinstall
-
-# Created by `pipx` on 2023-03-02 18:46:48
-export PATH="$PATH:/Users/mshelley/.local/bin"
 
 # Enable cloning from github
 alias git_certs='watch -n 240 "ssh -T org-49461806@github.com;ssh-add -D;ssh-add -K"' 
 
 alias gcloud_auth="gcloud auth login; gcloud auth application-default login; gcloud auth configure-docker"
-PATH="${PATH}:${HOME}/.local/bin"
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
  
 # Adding libexec/bin to path
@@ -238,7 +234,6 @@ eval "$(test -x $HERMIT_ROOT_BIN && $HERMIT_ROOT_BIN shell-hooks --print --zsh)"
 
 source /opt/homebrew/opt/autoenv/activate.sh
 export AUTOENV_ENABLE_LEAVE="non_empty"
-PATH="${PATH}:${HOME}/.local/bin"
 export PIPX_DEFAULT_PYTHON=python3.10
  
 # Adding libexec/bin to path

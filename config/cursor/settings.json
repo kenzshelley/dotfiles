@@ -1,0 +1,19 @@
+{
+    "window.commandCenter": true,
+    "workbench.colorTheme": "Base16 Default Dark",
+    "[python]": {
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.defaultColorDecorators": "never"
+    },
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+    "vscode-neovim.logOutputToConsole": true,
+    "vscode-neovim.neovimInitVimPaths.darwin": "/Users/mackenzie/programming/dotfiles/config/nvim/init.lua",
+    "vscode-neovim.logLevel": "debug",
+    "vscode-neovim.trace.server": "verbose",
+    "base16.generator.activatedThemes": [
+        "base16-material-vivid-dark"
+    ],
+    "files.autoSave": "afterDelay"
+}

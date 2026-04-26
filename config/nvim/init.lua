@@ -70,7 +70,7 @@ vim.keymap.set('n', '<C-f>', require('fzf-lua').live_grep, { desc = 'FZF live gr
 vim.keymap.set('n', '<C-b>', require('fzf-lua').buffers,   { desc = 'FZF buffers' }) 
 
 -- Nerdtree
-vim.keymap.set('n', '<C-n>', ':NERDTreeToggle<CR>', { desc = 'Open nerd tree' })
+vim.keymap.set('n', '<C-n>', ':Neotree toggle<CR>', { desc = 'Toggle neo-tree' })
 
 -- Supermaven
 vim.keymap.set('n', '<leader>sm', ':SupermavenToggle<CR>', { desc = 'Toggle Supermaven' })

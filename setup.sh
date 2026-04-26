@@ -73,3 +73,6 @@ link "$DOTFILES/config/zsh/zshrc"     ~/.zshrc
 link "$DOTFILES/config/tmux/tmux.conf" ~/.tmux.conf
 link "$DOTFILES/config/nvim"           ~/.config/nvim
 link "$DOTFILES/config/zsh/.p10k.zsh" ~/.p10k.zsh
+
+# Wire up git delta config without overwriting ~/.gitconfig credentials
+git config --global include.path "$DOTFILES/config/git/gitconfig"

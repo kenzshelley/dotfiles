@@ -76,6 +76,10 @@ link "$DOTFILES/config/nvim"                 ~/.config/nvim
 link "$DOTFILES/config/zsh/.p10k.zsh"        ~/.p10k.zsh
 mkdir -p ~/.config/ghostty
 link "$DOTFILES/config/ghostty/config"  ~/.config/ghostty/config
+CURSOR_USER="$HOME/Library/Application Support/Cursor/User"
+mkdir -p "$CURSOR_USER"
+link "$DOTFILES/config/cursor/settings.json"   "$CURSOR_USER/settings.json"
+link "$DOTFILES/config/cursor/keybindings.json" "$CURSOR_USER/keybindings.json"
 
 # Wire up git delta config without overwriting ~/.gitconfig credentials
 git config --global include.path "$DOTFILES/config/git/gitconfig"

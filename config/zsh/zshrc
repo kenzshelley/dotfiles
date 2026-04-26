@@ -73,7 +73,7 @@ pr_warning() {
 }
 
 
-# Aliases -- Keep these below zplug so that my aliases overwrite plugins'.
+# Aliases
 alias gpr='gh pr create --web' 
 alias vi='nvim'
 alias gl='git log'

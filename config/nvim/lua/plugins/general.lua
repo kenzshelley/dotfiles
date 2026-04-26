@@ -105,6 +105,18 @@ return {
     },
   },
 
+  {
+    "mikavilpas/yazi.nvim",
+    event = "VeryLazy",
+    keys = {
+      { "<leader>yy", "<cmd>Yazi<cr>",        desc = "Open yazi at current file" },
+      { "<leader>yd", "<cmd>Yazi cwd<cr>",    desc = "Open yazi at working directory" },
+    },
+    opts = {
+      open_for_directories = false,
+    },
+  },
+
   -- Prettiness
   "chriskempson/base16-vim", -- color scheme
   {

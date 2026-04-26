@@ -98,6 +98,20 @@ if not vim.g.vscode then
   }
   vim.lsp.enable('basedpyright')
 
+  vim.lsp.config.ruff = {
+    cmd = { 'ruff', 'server' },
+    filetypes = { 'python' },
+  }
+  vim.lsp.enable('ruff')
+
+  -- Format on save using ruff
+  vim.api.nvim_create_autocmd('BufWritePre', {
+    pattern = '*.py',
+    callback = function()
+      vim.lsp.buf.format({ name = 'ruff' })
+    end,
+  })
+
   ---- Configure LSP keybindings
   vim.api.nvim_create_autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('UserLspConfig', {}),

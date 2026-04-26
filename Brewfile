@@ -1,4 +1,4 @@
-brew 'autoenv'
+brew 'direnv'
 brew 'docker-compose'
 brew 'fzf'
 brew 'gh'

@@ -14,6 +14,7 @@ source $ZPLUG_HOME/init.zsh
 zplug "modules/utility", from:prezto
 zplug "modules/git", from:prezto
 zplug "kenzshelley/branch-hider"
+zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "modules/history-substring-search", from:prezto
 zplug "modules/prompt", from:prezto

@@ -73,8 +73,16 @@ return {
   "tpope/vim-rhubarb", -- enable Gbrowse command from vim-fugitive
   "tpope/vim-surround", -- easy to surround things w/ brackets etc
   "tpope/vim-repeat", -- repeat plugin commands with .
-  "vim-airline/vim-airline",
-  "vim-airline/vim-airline-themes",
+  {
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {
+      options = {
+        theme = "base16",
+        globalstatus = true,
+      },
+    },
+  },
   -- "mhinz/vim-grepper",
   {
     "ibhagwan/fzf-lua",

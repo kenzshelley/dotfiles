@@ -1,10 +1,6 @@
 -- Configure settings that need to be set before loading plugins
 vim.g.mapleader = " "
 
--- Airline
-vim.g.airline_powerline_fonts = true
-vim.g.airline_theme = "base16"
-
 -- Load plugins
 require("config.lazy")
 

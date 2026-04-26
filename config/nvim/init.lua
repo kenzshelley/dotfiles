@@ -1,7 +1,8 @@
 -- Configure settings that need to be set before loading plugins
+vim.g.mapleader = " "
 
 -- Airline
-vim.g.airline_powerline_fonts = true 
+vim.g.airline_powerline_fonts = true
 vim.g.airline_theme = "base16"
 
 -- Load plugins
@@ -21,7 +22,6 @@ vim.cmd('syntax enable')   -- enable syntax highlighting
 vim.opt.backup      = false      -- No backup files
 vim.opt.writebackup = false      -- No tmp backup files during writes
 vim.opt.errorbells  = false      -- Disable audio bell on error
-vim.g.mapleader     = " "        -- Map leader key to space
 vim.opt.clipboard   = "unnamed"  -- use system clipboard for yankj/paste (supports pasting through to tmux)
 
 -- Searching
@@ -75,6 +75,9 @@ vim.keymap.set('n', '<C-b>', require('fzf-lua').buffers,   { desc = 'FZF buffers
 
 -- Nerdtree
 vim.keymap.set('n', '<C-n>', ':NERDTreeToggle<CR>', { desc = 'Open nerd tree' })
+
+-- Supermaven
+vim.keymap.set('n', '<leader>sm', ':SupermavenToggle<CR>', { desc = 'Toggle Supermaven' })
 
 -- Enable language servers
 ---- Enable python language server (only if not running in vscode)

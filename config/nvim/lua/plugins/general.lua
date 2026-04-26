@@ -6,14 +6,33 @@ return {
   { "neovim/nvim-lspconfig", lazy = false },
 
   {
+    "supermaven-inc/supermaven-nvim",
+    opts = {
+      keymaps = {
+        accept_suggestion = "<Tab>",
+        clear_suggestion  = "<C-]>",
+        accept_word       = "<C-u>",
+      },
+    },
+  },
+
+  {
     "saghen/blink.cmp",
     version = "*",
     opts = {
       keymap = {
-        ["<Tab>"]   = { "select_next", "snippet_forward", "fallback" },
-        ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
-        ["<CR>"]    = { "accept", "fallback" },
-        ["<C-e>"]   = { "hide" },
+        ["<Tab>"] = {
+          function(cmp)
+            if not require("supermaven-nvim.completion_preview").has_suggestion() then
+              return cmp.select_next()
+            end
+          end,
+          "snippet_forward",
+          "fallback",
+        },
+        ["<S-Tab>"]   = { "select_prev", "snippet_backward", "fallback" },
+        ["<CR>"]      = { "accept", "fallback" },
+        ["<C-e>"]     = { "hide" },
         ["<C-space>"] = { "show" },
       },
       appearance = { nerd_font_variant = "mono" },

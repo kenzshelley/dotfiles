@@ -69,10 +69,11 @@ link() {
 }
 
 DOTFILES="$(pwd)"
-link "$DOTFILES/config/zsh/zshrc"        ~/.zshrc
-link "$DOTFILES/config/tmux/tmux.conf"  ~/.tmux.conf
-link "$DOTFILES/config/nvim"            ~/.config/nvim
-link "$DOTFILES/config/zsh/.p10k.zsh"  ~/.p10k.zsh
+link "$DOTFILES/config/zsh/zshrc"             ~/.zshrc
+link "$DOTFILES/config/zsh/.zsh_plugins.txt" ~/.zsh_plugins.txt
+link "$DOTFILES/config/tmux/tmux.conf"       ~/.tmux.conf
+link "$DOTFILES/config/nvim"                 ~/.config/nvim
+link "$DOTFILES/config/zsh/.p10k.zsh"        ~/.p10k.zsh
 mkdir -p ~/.config/ghostty
 link "$DOTFILES/config/ghostty/config"  ~/.config/ghostty/config
 

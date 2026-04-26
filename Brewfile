@@ -14,7 +14,7 @@ brew 'pyenv'
 brew 'reattach-to-user-namespace'
 brew 'the_silver_searcher'
 brew 'tmux'
-brew 'zplug'
+brew 'antidote'
 
 cask 'alfred'
 cask 'block-goose'

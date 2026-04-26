@@ -2,34 +2,17 @@ if [[ "$TERM_PROGRAM" == "vscode" ]]; then
   exit
 fi
 
-# zplug -- keep this above p10k config below since it has output
-if [[ `uname -m` == 'arm64' ]]; then
-  export ZPLUG_HOME=/opt/homebrew/opt/zplug
-else
-  export ZPLUG_HOME=/usr/local/opt/zplug
-fi
-
-source $ZPLUG_HOME/init.zsh
-
-zplug "modules/utility", from:prezto
-zplug "modules/git", from:prezto
-zplug "kenzshelley/branch-hider"
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-syntax-highlighting"
-zplug "modules/history-substring-search", from:prezto
-zplug "modules/prompt", from:prezto
-zplug "romkatv/powerlevel10k", as:theme, depth:1
-zplug "chriskempson/base16-shell", from:github
-
-zplug install
-zplug load
-
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+# Enable Powerlevel10k instant prompt. Must be near the top, before any output.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+
+# antidote
+source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+antidote load ~/.zsh_plugins.txt
+
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 
 # Set programming directory
 if [ -f ~/.work ]; then

@@ -107,7 +107,21 @@ return {
 
   -- Prettiness
   "chriskempson/base16-vim", -- color scheme
-  "mhinz/vim-signify", -- shows +/- for diffs
+  {
+    "lewis6991/gitsigns.nvim",
+    opts = {
+      on_attach = function(bufnr)
+        local gs = package.loaded.gitsigns
+        local opts = { buffer = bufnr }
+        vim.keymap.set('n', ']h', gs.next_hunk,        { buffer = bufnr, desc = 'Next hunk' })
+        vim.keymap.set('n', '[h', gs.prev_hunk,        { buffer = bufnr, desc = 'Prev hunk' })
+        vim.keymap.set('n', '<leader>hs', gs.stage_hunk,   opts)
+        vim.keymap.set('n', '<leader>hu', gs.undo_stage_hunk, opts)
+        vim.keymap.set('n', '<leader>hp', gs.preview_hunk,  opts)
+        vim.keymap.set('n', '<leader>hb', gs.blame_line,    opts)
+      end,
+    },
+  },
   {
     "MeanderingProgrammer/render-markdown.nvim",
     dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" },

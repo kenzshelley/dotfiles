@@ -89,7 +89,7 @@ pr_warning() {
 }
 
 
-# Git Aliases -- Keep these below zplug so that my aliases overwrite plugins'.
+# Aliases -- Keep these below zplug so that my aliases overwrite plugins'.
 alias gpr='gh pr create --web' 
 alias vi='nvim'
 alias gl='git log'
@@ -115,6 +115,7 @@ alias tap='touch'
 alias pssh='ssh pi@192.168.1.69'
 alias nv='nvim'
 alias branch='git branch --show-current | tr -d "\n"'
+alias y='yazi'
 
 gcob() {
   zparseopts -E -A args -- t: j:

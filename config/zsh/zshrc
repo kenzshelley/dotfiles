@@ -57,17 +57,6 @@ PATH=$PATH:~/.poetry/bin
 # Setup poetry autocomplete
 fpath+=~/.zfunc
 
-# Custom Functions
-zsh_git_branch() {
-  out=$(git branch | grep \* | cut -c3-) >& /dev/null;
-  if [ "$out" = "" ]; then
-    return
-  fi
-
-  out=" $out";
-
-  echo $out
-}
 
 pr_warning() {
   local pr_warning_string='Did you:\n * Make everything final that should be final\n * Check for random new lines\n * Actually test this as much as possible\n * SQUASH\n * CHECK FOR WARNINGS. NPES.\n * If it involves $$, fucking be careful.'
@@ -102,6 +91,13 @@ alias pssh='ssh pi@192.168.1.69'
 alias nv='nvim'
 alias branch='git branch --show-current | tr -d "\n"'
 alias y='yazi'
+alias ..='cd ..'
+alias ...='cd ../..'
+
+zshaddhistory() {
+  [[ $1 =~ '^(ls|cd|gs|gd|gl|gb|pwd|exit|y)\s*$' ]] && return 1
+  return 0
+}
 
 gcob() {
   zparseopts -E -A args -- t: j:
@@ -141,27 +137,6 @@ gcom() {
   gco mshelley."$1"
 }
 
-bm() {
-  echo "updating main branch"
-  gco $(get_main_branch)
-  git pull
-
-  echo "updating branches"
-  local branches=("${(@f)$(gb)}")
-  for branch in $branches; do
-    echo "updating $branch"
-    gco $branch
-    git rebase $(get_main_branch)
-    gco -
-  done
-
-  echo "finished"
-}
-
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-
 ftmf() {
   ulimit -n 4096
 }
@@ -173,10 +148,6 @@ drmi() {
 
 find_big_dirs() {
   du -k -h -d1 * | sort -h
-}
-
-clean_diff() {
-  pbpaste | grep -v "Merge pull request" | grep -v square-console.sqprod | grep -v '@signal-lib-updater' | pbcopy
 }
 
 # Fix too many files issue

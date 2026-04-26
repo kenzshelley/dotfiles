@@ -71,7 +71,7 @@ return {
   -- Usability
   "tpope/vim-fugitive", -- git in vim
   "tpope/vim-rhubarb", -- enable Gbrowse command from vim-fugitive
-  "tpope/vim-surround", -- easy to surround things w/ brackets etc
+  { "kylechui/nvim-surround", version = "*", event = "VeryLazy", config = true },
   "tpope/vim-repeat", -- repeat plugin commands with .
   {
     "nvim-lualine/lualine.nvim",

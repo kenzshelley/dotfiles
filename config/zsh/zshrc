@@ -217,3 +217,4 @@ export PATH=$PATH:/opt/homebrew/opt/python@3/libexec/bin
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 p10k finalize
+export PATH="$HOME/.local/bin:$PATH"

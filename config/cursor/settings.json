@@ -15,5 +15,6 @@
     "base16.generator.activatedThemes": [
         "base16-material-vivid-dark"
     ],
-    "files.autoSave": "afterDelay"
+    "files.autoSave": "afterDelay",
+    "window.autoDetectColorScheme": true
 }

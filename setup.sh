@@ -24,6 +24,9 @@ fi
 # Install brew things
 brew bundle --file Brewfile
 
+# Install pipx tools (LSP servers, etc. not available via brew)
+pipx install basedpyright
+
 if [ -n "$IS_WORK" ]; then
     echo "Installing work specific stuff"
     brew bundle --file Brewfile.work

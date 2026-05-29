@@ -38,7 +38,6 @@ source "$DEV_HOME/dotfiles/config/zsh/py_env_functions.sh"
 # Setup Goose stuff
 source "$DEV_HOME/dotfiles/config/zsh/goose.sh"
 
-# Put homebrew ahead of system on path PATH=/user/local/bin:$PATH
 # General
 export VISUAL='nvim'
 export EDITOR=$VISUAL
@@ -58,6 +57,9 @@ bindkey '^R' history-incremental-pattern-search-backward
 
 # Put poetry on path
 PATH=$PATH:~/.poetry/bin
+
+# Put local bin on path
+PATH=$PATH:/usr/local/bin
 
 # Setup poetry autocomplete
 fpath+=~/.zfunc

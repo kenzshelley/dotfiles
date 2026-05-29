@@ -16,5 +16,6 @@
         "base16-material-vivid-dark"
     ],
     "files.autoSave": "afterDelay",
-    "window.autoDetectColorScheme": true
+    "window.autoDetectColorScheme": true,
+    "cursorpyright.shouldImportPylanceSettings": "never"
 }

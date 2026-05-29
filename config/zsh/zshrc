@@ -101,6 +101,7 @@ alias branch='git branch --show-current | tr -d "\n"'
 alias y='yazi'
 alias ..='cd ..'
 alias ...='cd ../..'
+alias gps='push_stack'
 
 zshaddhistory() {
   [[ $1 =~ '^(ls|cd|gs|gd|gl|gb|pwd|exit|y)\s*$' ]] && return 1

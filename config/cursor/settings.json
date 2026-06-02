@@ -17,5 +17,6 @@
     ],
     "files.autoSave": "afterDelay",
     "window.autoDetectColorScheme": true,
-    "cursorpyright.shouldImportPylanceSettings": "never"
+    "cursorpyright.shouldImportPylanceSettings": "never",
+    "git.blame.editorDecoration.enabled": true
 }

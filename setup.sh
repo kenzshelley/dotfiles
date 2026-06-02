@@ -83,6 +83,9 @@ CURSOR_USER="$HOME/Library/Application Support/Cursor/User"
 mkdir -p "$CURSOR_USER"
 link "$DOTFILES/config/cursor/settings.json"   "$CURSOR_USER/settings.json"
 link "$DOTFILES/config/cursor/keybindings.json" "$CURSOR_USER/keybindings.json"
+mkdir -p ~/.codex ~/.claude
+link "$DOTFILES/agents/global.md" ~/.codex/AGENTS.md
+link "$DOTFILES/agents/global.md" ~/.claude/CLAUDE.md
 
 # Wire up git delta config without overwriting ~/.gitconfig credentials
 git config --global include.path "$DOTFILES/config/git/gitconfig"

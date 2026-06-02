@@ -53,6 +53,7 @@ ask before proceeding.
 - Keep stacked PRs narrow: each branch should have a coherent purpose and should
   be reviewable on its own relative to its parent.
 - Put repository worktrees under `~/programming/worktrees/[repo-name]/`.
+- Whenever creating a new worktree for the valthos repository, run `make install` 
 
 ## Code Quality
 

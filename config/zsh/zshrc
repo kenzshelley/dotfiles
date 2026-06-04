@@ -75,7 +75,12 @@ pr_warning() {
 alias gpr='gh pr create --web' 
 alias vi='nvim'
 alias gl='git log'
-alias gb='git branch'
+# branch-hider plugin aliases `gb`; remove it so we can define our own function.
+# Native `git branch` listing (same * / + markers and colors) plus each branch's upstream target.
+unalias gb 2>/dev/null
+gb() {
+  git branch --format='%(if)%(HEAD)%(then)%(color:green)* %(else)%(if)%(worktreepath)%(then)%(color:cyan)+ %(else)  %(end)%(end)%(align:45,left)%(refname:short)%(end)%(color:reset)%(if)%(upstream)%(then)%(color:blue)-> %(upstream:short)%(color:reset)%(end)' "$@"
+}
 alias gbv='git branch -vv'
 alias gco='git checkout'
 alias gs='git status'

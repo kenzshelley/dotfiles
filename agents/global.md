@@ -67,6 +67,9 @@ ask before proceeding.
   code that is already self-explanatory.
 - Preserve API contracts and generated clients. When an OpenAPI or schema source
   changes, regenerate clients instead of hand-editing generated output.
+- Write tests for core functionality. Do not write tests that don't change public behavior
+  or important private behavior. For example, do not write tests to confirm that a logging
+  line happens. Make tests concise where possible.
 
 ## Dependencies and Tooling
 

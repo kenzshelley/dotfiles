@@ -162,6 +162,19 @@ drmi() {
   docker rmi -f $(docker images -q)
 }
 
+# Exec a shell into a running ECS task. Usage: ecsx <task-id> <container> [command]
+# Defaults to bash (so ctrl-p/arrow history works); /bin/sh (dash) has no line editing.
+# Pass a 3rd arg to override, e.g. `ecsx <task> <container> /bin/sh`.
+ecsx() {
+  if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "usage: ecsx <task-id> <container> [command]" >&2
+    return 1
+  fi
+  local cmd="${3:-/bin/bash}"
+  aws ecs execute-command --cluster aquifer-dev --region us-east-2 \
+    --task "$1" --container "$2" --interactive --command "$cmd"
+}
+
 
 find_big_dirs() {
   du -k -h -d1 * | sort -h

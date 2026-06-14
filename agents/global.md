@@ -52,6 +52,7 @@ ask before proceeding.
 - For PRs that depend on each other, prefer stacked branches and stacked PRs.
 - Keep stacked PRs narrow: each branch should have a coherent purpose and should
   be reviewable on its own relative to its parent.
+- Default to working in a new worktree, unless I tell you otherwise. "Stacks" of PRs related to one feature can share the same worktree.
 - Put repository worktrees under `~/programming/worktrees/[repo-name]/`.
 - Whenever creating a new worktree for the valthos repository, run `make install` 
 
@@ -70,6 +71,8 @@ ask before proceeding.
 - Write tests for core functionality. Do not write tests that don't change public behavior
   or important private behavior. For example, do not write tests to confirm that a logging
   line happens. Make tests concise where possible.
+- Prefer clear classes to long, scattered methods in a large file.
+- When working in the valthos repository, ensure you use the utils under python/valthos/utils when relevant.
 
 ## Dependencies and Tooling
 

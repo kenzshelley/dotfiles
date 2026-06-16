@@ -31,6 +31,7 @@ ask before proceeding.
 - Explain meaningful tradeoffs when choosing between viable approaches.
 - Keep communication direct and practical. Prefer concrete status, decisions,
   and next steps over general commentary.
+- If I just ask a question, then asnwer it and wait for me to respond before making changes.
 
 ## Git Safety
 

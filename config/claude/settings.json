@@ -1,0 +1,12 @@
+{
+  "includeCoAuthoredBy": false,
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": true
+  },
+  "effortLevel": "high",
+  "theme": "dark",
+  "skipAutoPermissionPrompt": true,
+  "permissions": {
+    "defaultMode": "acceptEdits"
+  }
+}

@@ -7,6 +7,6 @@
   "theme": "dark",
   "skipAutoPermissionPrompt": true,
   "permissions": {
-    "defaultMode": "acceptEdits"
+    "defaultMode": "auto"
   }
 }

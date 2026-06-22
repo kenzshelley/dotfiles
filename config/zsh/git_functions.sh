@@ -50,6 +50,49 @@ push_stack() {
   done
 }
 
+# Iterate over every worktree; if its checked-out branch is tied to a PR that
+# has already been MERGED, remove the worktree and delete the branch.
+# The primary working tree (and the main branch) are always protected.
+clean_merged_worktrees() {
+  local main_branch=$(get_main_branch)
+  # The primary working tree is the first entry in `git worktree list --porcelain`.
+  local main_worktree=$(git worktree list --porcelain | awk 'NR==1{print $2}')
+  local current_worktree=$(git rev-parse --show-toplevel)
+
+  local wt_path="" wt_branch=""
+  while IFS= read -r line; do
+    case "$line" in
+      "worktree "*) wt_path="${line#worktree }"; wt_branch="" ;;
+      "branch "*)   wt_branch="${line#branch refs/heads/}" ;;
+      "")
+        # Blank line terminates a worktree record; act on what we collected.
+        [[ -z "$wt_path" ]] && continue
+
+        if [[ "$wt_path" == "$main_worktree" ]]; then
+          echo "Skipping primary worktree: $wt_path"
+          continue
+        fi
+        if [[ "$wt_path" == "$current_worktree" ]]; then
+          echo "Skipping current worktree: $wt_path"
+          continue
+        fi
+        if [[ -z "$wt_branch" || "$wt_branch" == "$main_branch" ]]; then
+          echo "Skipping $wt_path (branch: ${wt_branch:-detached})"
+          continue
+        fi
+
+        local state=$(gh pr view "$wt_branch" --json state --jq .state 2> /dev/null)
+        if [[ "$state" == "MERGED" ]]; then
+          echo "Removing worktree $wt_path (branch $wt_branch, PR merged)"
+          git worktree remove "$wt_path" && git branch -D "$wt_branch"
+        else
+          echo "Skipping $wt_branch (PR state: ${state:-none})"
+        fi
+        ;;
+    esac
+  done < <(git worktree list --porcelain)
+}
+
 delete_merged_branches() {
   main_branch=$(get_main_branch)
   get_branches

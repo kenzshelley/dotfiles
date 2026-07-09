@@ -17,6 +17,17 @@
     ],
     "files.autoSave": "afterDelay",
     "window.autoDetectColorScheme": true,
+    "python.languageServer": "None",
     "cursorpyright.shouldImportPylanceSettings": "never",
-    "git.blame.editorDecoration.enabled": true
+    "cursorpyright.analysis.extraPaths": [
+        "./python"
+    ],
+    "cursorpyright.analysis.autoSearchPaths": true,
+    "cursorpyright.analysis.useLibraryCodeForTypes": true,
+    "git.blame.editorDecoration.enabled": true,
+    "claudeCode.preferredLocation": "panel",
+    "git.enableSmartCommit": true,
+    "terminal.external.osxExec": "Ghostty.app",
+    "terminal.integrated.copyOnSelection": true,
+    "terminal.integrated.fontFamily": "MesloLGS NF, Menlo, Monaco, monospace"
 }

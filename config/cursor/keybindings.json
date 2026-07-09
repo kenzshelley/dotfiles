@@ -7,19 +7,43 @@
     {
         
         "key": "ctrl+k",
-        "command": "workbench.action.navigateUp"
+        "command": "workbench.action.focusAboveGroup",
+        "when": "editorTextFocus && neovim.init && neovim.mode != insert"
     },
     {
         "key": "ctrl+j",
-        "command": "workbench.action.navigateDown"
+        "command": "workbench.action.focusBelowGroup",
+        "when": "editorTextFocus && neovim.init && neovim.mode != insert"
     },
     {
         "key": "ctrl+h",
-        "command": "workbench.action.navigateLeft"
+        "command": "workbench.action.focusLeftGroup",
+        "when": "editorTextFocus && neovim.init && neovim.mode != insert"
     },
     {
         "key": "ctrl+l",
-        "command": "workbench.action.navigateRight"
+        "command": "workbench.action.focusRightGroup",
+        "when": "editorTextFocus && neovim.init && neovim.mode != insert"
+    },
+    {
+        "key": "ctrl+k",
+        "command": "workbench.action.navigateUp",
+        "when": "!editorTextFocus"
+    },
+    {
+        "key": "ctrl+j",
+        "command": "workbench.action.navigateDown",
+        "when": "!editorTextFocus"
+    },
+    {
+        "key": "ctrl+h",
+        "command": "workbench.action.navigateLeft",
+        "when": "!editorTextFocus"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "workbench.action.navigateRight",
+        "when": "!editorTextFocus"
     },
     {
         "key": "ctrl+a",

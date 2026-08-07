@@ -62,10 +62,38 @@
     ],
     "cursorpyright.analysis.autoSearchPaths": true,
     "cursorpyright.analysis.useLibraryCodeForTypes": true,
+    "cursorpyright.analysis.diagnosticSeverityOverrides": {
+        "reportAny": "none",
+        "reportExplicitAny": "none",
+        "reportUnknownArgumentType": "none",
+        "reportUnknownLambdaType": "none",
+        "reportUnknownMemberType": "none",
+        "reportUnknownParameterType": "none",
+        "reportUnknownVariableType": "none"
+    },
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportAny": "none",
+        "reportExplicitAny": "none",
+        "reportUnknownArgumentType": "none",
+        "reportUnknownLambdaType": "none",
+        "reportUnknownMemberType": "none",
+        "reportUnknownParameterType": "none",
+        "reportUnknownVariableType": "none"
+    },
+    "basedpyright.analysis.diagnosticSeverityOverrides": {
+        "reportAny": "none",
+        "reportExplicitAny": "none",
+        "reportUnknownArgumentType": "none",
+        "reportUnknownLambdaType": "none",
+        "reportUnknownMemberType": "none",
+        "reportUnknownParameterType": "none",
+        "reportUnknownVariableType": "none"
+    },
     "git.blame.editorDecoration.enabled": true,
     "claudeCode.preferredLocation": "panel",
     "git.enableSmartCommit": true,
     "terminal.external.osxExec": "Ghostty.app",
     "terminal.integrated.copyOnSelection": true,
-    "terminal.integrated.fontFamily": "MesloLGS NF, Menlo, Monaco, monospace"
+    "terminal.integrated.fontFamily": "MesloLGS NF, Menlo, Monaco, monospace",
+    "githubPullRequests.pullBranch": "never"
 }

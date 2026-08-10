@@ -1,2 +1,4 @@
 config/nvim/.netrwhist
 config/nvim/package-lock.json
+# per-project state created by the serena MCP server
+.serena/

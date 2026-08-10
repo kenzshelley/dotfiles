@@ -13,8 +13,10 @@ brew 'hermit'
 brew 'pipx'
 brew 'pyenv'
 brew 'reattach-to-user-namespace'
+brew 'ripgrep' # agents reach for rg constantly; we only had the_silver_searcher
 brew 'the_silver_searcher'
 brew 'tmux'
+brew 'tree-sitter-cli' # nvim-treesitter (main branch) compiles parsers with this
 brew 'antidote'
 
 cask 'alfred'

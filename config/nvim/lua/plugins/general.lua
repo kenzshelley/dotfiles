@@ -119,7 +119,10 @@ return {
   {
     "ibhagwan/fzf-lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = { winopts = { preview = { default = "bat" } } },
+    -- "builtin" previews in a real buffer, so highlighting comes from the same
+    -- treesitter parsers (and colorscheme) as the editor. The alternative,
+    -- "bat", shells out to a binary that has to be installed separately.
+    opts = { winopts = { preview = { default = "builtin" } } },
   },
   {
     "nvim-neo-tree/neo-tree.nvim",
@@ -151,6 +154,30 @@ return {
 
   -- Prettiness
   "chriskempson/base16-vim", -- color scheme
+  {
+    -- On the 'main' branch nothing is automatic: parsers are declared here, and
+    -- highlighting has to be started per-buffer (see the FileType autocmd).
+    -- Parsers install to ~/.local/share/nvim/site/parser.
+    "nvim-treesitter/nvim-treesitter",
+    branch = "main",
+    lazy = false,
+    build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter").setup()
+      -- No-op for parsers that are already present, so this is safe every start.
+      require("nvim-treesitter").install({
+        "bash", "json", "lua", "markdown", "markdown_inline",
+        "python", "toml", "yaml",
+      })
+
+      -- Start treesitter wherever a parser exists; silently leave buffers with
+      -- no parser on Vim's regex syntax rather than erroring.
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("UserTreesitter", {}),
+        callback = function(ev) pcall(vim.treesitter.start, ev.buf) end,
+      })
+    end,
+  },
   {
     "lewis6991/gitsigns.nvim",
     opts = {

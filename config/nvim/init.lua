@@ -78,7 +78,37 @@ local vimrc_bg = vim.fn.expand("~/.vimrc_background")
 -- fzf-lua settings
 vim.keymap.set('n', '<C-p>', require('fzf-lua').files,     { desc = 'FZF files' })
 vim.keymap.set('n', '<C-f>', require('fzf-lua').live_grep, { desc = 'FZF live grep' })
-vim.keymap.set('n', '<C-b>', require('fzf-lua').buffers,   { desc = 'FZF buffers' }) 
+vim.keymap.set('n', '<C-b>', require('fzf-lua').buffers,   { desc = 'FZF buffers' })
+
+-- Symbol search (LSP-backed; only useful where a language server is attached).
+-- Workspace search must be the *live* picker: pyright returns nothing for an
+-- empty query, so there is no full symbol list to fuzzy-filter locally.
+vim.keymap.set('n', '<leader>ss', require('fzf-lua').lsp_document_symbols,       { desc = 'FZF symbols: document' })
+vim.keymap.set('n', '<leader>sw', require('fzf-lua').lsp_live_workspace_symbols, { desc = 'FZF symbols: workspace (live)' })
+
+-- One picker over files + buffers + symbols, switched by query prefix:
+--   (none) files | $ buffers | @ symbols in buffer | # symbols in project
+-- fzf-lua picks LSP symbol pickers when a server supports them and falls back
+-- to ctags otherwise, so this keeps working in languages with no LSP attached.
+local function global_pickers()
+  local ok, defaults = pcall(require, 'fzf-lua.defaults')
+  local build = ok and vim.tbl_get(defaults, 'defaults', 'global', 'pickers')
+  if type(build) ~= 'function' then return nil end
+  local pickers = build()
+  -- Swap the project-symbol picker for its live variant. The default one-shot
+  -- picker opens with an empty query, and pyright returns nothing for an empty
+  -- query, so '#' would come up blank.
+  for _, picker in ipairs(pickers) do
+    if picker[1] == 'lsp_workspace_symbols' then
+      picker[1] = 'lsp_live_workspace_symbols'
+    end
+  end
+  return pickers
+end
+
+vim.keymap.set('n', '<leader>sg', function()
+  require('fzf-lua').global({ pickers = global_pickers() })
+end, { desc = 'FZF global: files + buffers + symbols' })
 
 -- Nerdtree
 vim.keymap.set('n', '<C-n>', ':Neotree toggle<CR>', { desc = 'Toggle neo-tree' })
@@ -193,6 +223,10 @@ if not vim.g.vscode then
       local opts = { buffer = ev.buf }
       vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+      -- 'grr' rather than 'gr': Neovim's built-in gri/gra/grn/grt defaults make
+      -- a bare 'gr' a prefix, which stalls for 'timeoutlen' before firing.
+      -- This overrides the built-in grr (same query, quickfix instead of fzf).
+      vim.keymap.set('n', 'grr', require('fzf-lua').lsp_references, opts)
       vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
       vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
       vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, opts)

@@ -47,7 +47,30 @@ return {
     },
   },
 
-  -- Navigation 
+  -- Agents
+  -- nvim runs a WebSocket server and writes ~/.claude/ide/<port>.lock; a plain
+  -- `claude --ide` in another tmux pane discovers it and gets live editor
+  -- context (open file, visual selection) plus diffs reviewed in nvim.
+  -- Nothing is launched inside nvim: "none" keeps the server and tools live but
+  -- adds no UI actions ("external" would have nvim spawn the terminal itself).
+  {
+    "coder/claudecode.nvim",
+    lazy = false, -- the server must be listening before Claude starts in its pane
+    keys = {
+      { "<leader>as", "<cmd>ClaudeCodeSend<CR>",    mode = "v", desc = "Agent: send selection to Claude" },
+      { "<leader>af", "<cmd>ClaudeCodeAdd %<CR>",               desc = "Agent: @-mention current file" },
+      { "<leader>ak", "<cmd>ClaudeCodeStatus<CR>",              desc = "Agent: connection status" },
+      { "<leader>ay", "<cmd>ClaudeCodeDiffAccept<CR>",          desc = "Agent: accept diff" },
+      { "<leader>an", "<cmd>ClaudeCodeDiffDeny<CR>",            desc = "Agent: reject diff" },
+    },
+    opts = {
+      terminal = { provider = "none" }, -- Claude lives in its own tmux pane
+      track_selection = true,
+      diff_opts = { layout = "vertical" },
+    },
+  },
+
+  -- Navigation
   {
     "christoomey/vim-tmux-navigator",
     cmd = {
@@ -71,6 +94,15 @@ return {
   -- Usability
   "tpope/vim-fugitive", -- git in vim
   "tpope/vim-rhubarb", -- enable Gbrowse command from vim-fugitive
+  {
+    "sindrets/diffview.nvim", -- review diffs against arbitrary refs
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory", "DiffviewFocusFiles", "DiffviewToggleFiles" },
+    opts = {
+      enhanced_diff_hl = true,
+      view = { merge_tool = { layout = "diff3_mixed" } },
+    },
+  },
   { "kylechui/nvim-surround", version = "*", event = "VeryLazy", config = true },
   "tpope/vim-repeat", -- repeat plugin commands with .
   {

@@ -175,6 +175,23 @@ vim.keymap.set('n', '<leader>db', function()
   vim.cmd('DiffviewOpen ' .. base_ref() .. '...HEAD')
 end, { desc = 'Diff: branch vs merge-base' })
 
+-- diffview is side-by-side only; for a unified diff, shell out to delta (already
+-- our core.pager) in a terminal tab. paging=never keeps the whole diff in the
+-- buffer so nvim's own motions and search work instead of less's.
+local function delta_diff(rev)
+  local cmd = { 'git', '-c', 'delta.paging=never', 'diff' }
+  if rev then table.insert(cmd, rev) end
+
+  vim.cmd('tabnew')
+  vim.fn.jobstart(cmd, { term = true })
+  vim.keymap.set('n', 'q', '<cmd>tabclose!<CR>', { buffer = true, desc = 'Close delta diff' })
+end
+
+vim.keymap.set('n', '<leader>du', function() delta_diff() end,
+  { desc = 'Diff: unified via delta, uncommitted' })
+vim.keymap.set('n', '<leader>dU', function() delta_diff(base_ref() .. '...HEAD') end,
+  { desc = 'Diff: unified via delta, branch vs merge-base' })
+
 -- Re-base the gitsigns column so ]h/[h walk branch changes rather than changes since HEAD
 vim.keymap.set('n', '<leader>dg', function()
   require('gitsigns').change_base(base_ref(), true)

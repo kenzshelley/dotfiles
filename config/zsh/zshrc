@@ -38,6 +38,9 @@ source "$DEV_HOME/dotfiles/config/zsh/py_env_functions.sh"
 # Setup Goose stuff
 source "$DEV_HOME/dotfiles/config/zsh/goose.sh"
 
+# fnm
+eval "$(fnm env --use-on-cd --shell zsh)"
+
 # General
 export VISUAL='nvim'
 export EDITOR=$VISUAL

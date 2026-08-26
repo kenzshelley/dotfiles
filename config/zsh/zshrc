@@ -39,7 +39,7 @@ source "$DEV_HOME/dotfiles/config/zsh/py_env_functions.sh"
 source "$DEV_HOME/dotfiles/config/zsh/goose.sh"
 
 # fnm
-eval "$(fnm env --use-on-cd --shell zsh)"
+eval "$(fnm env --use-on-cd --shell zsh --log-level quiet)"
 
 # General
 export VISUAL='nvim'
@@ -191,8 +191,6 @@ source ~/.p10k.zsh
 base16_material
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-eval "$(fnm env --use-on-cd --shell zsh)"
 
 # Completion setup
 # The following lines were added by compinstall

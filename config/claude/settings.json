@@ -13,6 +13,11 @@
   "theme": "dark",
   "skipAutoPermissionPrompt": true,
   "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(aws s3:*prod-files-secure*)",
+      "Bash(terraform:*) in infrastructure/terraform/valthos/ when targeting production-named workspaces/state"
+    ],
     "environment": [
       "### Org-wide",
       "**Organization**: valthos-industries (GitHub org; repo github.com:valthos-industries/valthos.git)",
@@ -38,11 +43,6 @@
       "**Trusted repo**: /Users/mackenzie/programming/valthos (github.com:valthos-industries/valthos.git, private) — confidential material may be committed here; secrets and sensitive data are never cleared by visibility alone",
       "**Org-specific CLIs**: uv, vercel, aws, terraform, prefect, canopy, just — routine under this repo's working tree",
       "**Personal branch prefix**: mshelley. (per global CLAUDE.md instructions) — routine under this repo"
-    ],
-    "soft_deny": [
-      "$defaults",
-      "Bash(aws s3:*prod-files-secure*)",
-      "Bash(terraform:*) in infrastructure/terraform/valthos/ when targeting production-named workspaces/state"
     ]
   }
 }

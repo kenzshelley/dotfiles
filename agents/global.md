@@ -55,7 +55,10 @@ ask before proceeding.
   be reviewable on its own relative to its parent.
 - Default to working in a new worktree, unless I tell you otherwise. "Stacks" of PRs related to one feature can share the same worktree.
 - Put repository worktrees under `~/programming/worktrees/[repo-name]/`.
-- Whenever creating a new worktree for the valthos repository, run `make install` 
+- Whenever creating a new worktree for the valthos repository, run the focused
+  setup targets matching the work: `make install-python`, `make install-frontend`,
+  and/or `make install-infrastructure`. Combine targets when work spans areas. If
+  the required focused target is unavailable on that revision, run `make install`.
 - Whenever printing a reference to a PR number, make it a link to the PR, e.g.
   `[#123](https://github.com/[org]/[repo]/pull/123)`. This applies to chat
   responses, summaries, commit messages, and PR descriptions.

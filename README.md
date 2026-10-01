@@ -20,6 +20,28 @@ You can find the old access token in your password manager, or just create a new
 Change scroll direction to natural.
 2. Edit modifier keys for keyboard in keyboard settings.
 
-## Temporary stack test
+## Git Cleanup
 
-This temporary paragraph tests automatic rebasing after the first PR is squash-merged.
+Reload the shell with `source ~/.zshrc` after updating these helpers. They require
+Python 3.9+, Git, and GitHub CLI (`gh`) for branches not reachable from the default
+branch.
+
+- `gwc` removes eligible worktrees and their branches.
+- `gbd` removes eligible branches without worktrees; checked-out branches point you to `gwc`.
+- Add `--dry-run` to preview without deletion or prompts. This still fetches the default branch from origin.
+- Add `--force` to ask for a literal `y` for each item needing an override.
+- Combine `--force --dry-run` to preview which items would need confirmation.
+
+Automatic cleanup requires commits reachable from the freshly fetched default
+branch, or exactly one matching merged PR into that branch whose head matches the
+local tip. Backup branches, detached worktrees, uncertain merge status, local
+changes to tracked files, non-ignored untracked files, and initialized submodules require individual force
+confirmation. Force removal can discard local commits and files. Inspect the
+listed worktree with `git -C <path> status --short` before approving.
+Ignored files do not block cleanup and are removed with the worktree.
+
+The primary/current worktree, default/current branch, and locked worktrees remain
+protected even with `--force`. GitHub or Git verification failures are reported
+and cannot be overridden. Force confirmation requires an interactive terminal;
+there is no blanket yes option. Cleanup prints a summary and returns nonzero on
+failures. Run helper tests with `python3 -m unittest discover -s tests -v`.

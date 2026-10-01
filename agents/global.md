@@ -32,6 +32,11 @@ ask before proceeding.
 - Keep communication direct and practical. Prefer concrete status, decisions,
   and next steps over general commentary.
 - If I just ask a question, then asnwer it and wait for me to respond before making changes.
+- Treat PR follow-ups as incremental work; do not restart project-tracker or
+  independent-verification workflows unless I explicitly request it for that follow-up.
+- Validate against the PR's current remote base. Run focused checks and inspect
+  CI; repeat passing checks only for relevant changes or new evidence.
+- Explain substantial scope expansion before starting another expensive review cycle.
 
 ## Git Safety
 

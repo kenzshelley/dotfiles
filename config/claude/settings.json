@@ -3,6 +3,7 @@
   "permissions": {
     "defaultMode": "auto"
   },
+  "model": "claude-fable-5-1[1m]",
   "enabledPlugins": {
     "vercel@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
@@ -43,5 +44,10 @@
       "**Org-specific CLIs**: uv, vercel, aws, terraform, prefect, canopy, just — routine under this repo's working tree",
       "**Personal branch prefix**: mshelley. (per global CLAUDE.md instructions) — routine under this repo"
     ]
+  },
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "medium"
+    }
   }
 }

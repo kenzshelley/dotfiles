@@ -95,5 +95,6 @@
     "terminal.external.osxExec": "Ghostty.app",
     "terminal.integrated.copyOnSelection": true,
     "terminal.integrated.fontFamily": "MesloLGS NF, Menlo, Monaco, monospace",
-    "githubPullRequests.pullBranch": "never"
+    "githubPullRequests.pullBranch": "never",
+    "cursor.composer.queueMessageDefaultBehavior": "steer"
 }

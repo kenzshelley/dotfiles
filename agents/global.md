@@ -56,6 +56,8 @@ ask before proceeding.
 - For multiple related PRs, use the pattern
   `mshelley.[feature]/specific-branch`.
 - For PRs that depend on each other, prefer stacked branches and stacked PRs.
+- Prefer `gh stack rebase` and `gh stack push` for GitHub stacks; use manual Git
+  only when a concrete CLI limitation requires it.
 - Keep stacked PRs narrow: each branch should have a coherent purpose and should
   be reviewable on its own relative to its parent.
 - Default to working in a new worktree, unless I tell you otherwise. "Stacks" of PRs related to one feature can share the same worktree.

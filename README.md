@@ -22,4 +22,4 @@ Change scroll direction to natural.
 
 ## Temporary stack test
 
-This temporary paragraph tests a two-PR stack.
+This temporary paragraph tests automatic rebasing after the first PR is squash-merged.

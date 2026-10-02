@@ -19,3 +19,7 @@ You can find the old access token in your password manager, or just create a new
 1. Install [logitech options](https://www.logitech.com/en-us/product/options) to setup mouse.
 Change scroll direction to natural.
 2. Edit modifier keys for keyboard in keyboard settings.
+
+## Temporary stack test
+
+This temporary paragraph tests a two-PR stack.

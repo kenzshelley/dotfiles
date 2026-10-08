@@ -41,11 +41,10 @@ ask before proceeding.
 ## Git Safety
 
 - Never run destructive git commands unless explicitly requested.
-- Do not amend, squash, rebase, reset, force-push, or delete branches without
-  confirmation unless I've explicitly told you to.
+- Rebasing and force-pushing with `--force-with-lease` are authorized for
+  agent-managed PR branches when maintaining stacks. Never overwrite unrelated
+  user work or force-push shared base branches.
 - Do not commit unrelated changes.
-- Before creating commits, inspect `git status` and make sure the commit only
-  includes intended files.
 - Use clear commit messages that describe the change and its reason, but are not needlessly verbose.
 
 ## Branches, PRs, and Worktrees
@@ -56,11 +55,14 @@ ask before proceeding.
 - For multiple related PRs, use the pattern
   `mshelley.[feature]/specific-branch`.
 - For PRs that depend on each other, prefer stacked branches and stacked PRs.
+- Open PRs stacked on another PR in a GitHub stack as drafts, and keep them
+  draft while based on that PR. PRs based directly on `main` may be non-draft.
 - Prefer `gh stack rebase` and `gh stack push` for GitHub stacks; use manual Git
   only when a concrete CLI limitation requires it.
+- DO NOT merge branches into each other when using github stacks. Github stacks requires linear history.
 - Keep stacked PRs narrow: each branch should have a coherent purpose and should
   be reviewable on its own relative to its parent.
-- Default to working in a new worktree, unless I tell you otherwise. "Stacks" of PRs related to one feature can share the same worktree.
+- Default to working in a new worktree, unless I tell you otherwise. "Stacks" of PRs related to one feature can share the same worktree, but aren't required to.
 - Put repository worktrees under `~/programming/worktrees/[repo-name]/`.
 - Whenever creating a new worktree for the valthos repository, run the focused
   setup targets matching the work: `make install-python`, `make install-frontend`,
@@ -74,18 +76,17 @@ ask before proceeding.
 
 - Prefer boring, maintainable code over clever abstractions.
 - Avoid duplication.
-- Add abstractions only when they remove real duplication, simplify meaningful
-  complexity, or match an established local pattern.
 - Prefer typed, structured APIs and parsers over ad hoc string manipulation when
   the project or standard toolchain provides them.
 - Keep comments sparse and useful. Add them for non-obvious behavior, not for
-  code that is already self-explanatory.
+  code that is already self-explanatory. You should still add simple docstrings for public methods.
 - Preserve API contracts and generated clients. When an OpenAPI or schema source
   changes, regenerate clients instead of hand-editing generated output.
 - Write tests for core functionality. Do not write tests that don't change public behavior
   or important private behavior. For example, do not write tests to confirm that a logging
   line happens. Make tests concise where possible.
 - Prefer clear classes to long, scattered methods in a large file.
+- Split long methods into smaller, more focused methods. Strive for human readability.
 - When working in the valthos repository, ensure you use the utils under python/valthos/utils when relevant.
 
 ## Dependencies and Tooling

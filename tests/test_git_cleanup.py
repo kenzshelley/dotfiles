@@ -97,6 +97,79 @@ class CleanupTests(unittest.TestCase):
         self.assertFalse(any('status' in call.args or 'ls-files' in call.args for call in run.call_args_list))
 
 
+    def test_skipped_detached_worktree_shows_head_committer_timestamp(self):
+        path = self.detached_tree()
+        with patch.dict(os.environ, {
+            'GIT_AUTHOR_DATE': '2020-01-01T01:02:03+00:00',
+            'GIT_COMMITTER_DATE': '2026-10-16T20:30:40+00:00',
+            'TZ': 'UTC',
+        }):
+            self.commit_file(path, 'feature', b'unmerged work\n')
+            self.assertEqual(cleanup.cleanup('worktrees', dry_run=True), 0)
+        self.assertTrue(path.exists())
+        report = self.output.getvalue()
+        self.assertIn('Last commit: 2026-10-16 20:30:40', report)
+        self.assertNotIn('2020-01-01', report)
+
+    def test_timestamp_lookup_failure_does_not_affect_retention(self):
+        path = self.tree()
+        tip = self.git('rev-parse', 'topic')
+        with self.pr(tip, state='OPEN'), patch.object(cleanup, 'commit_timestamps', return_value={}):
+            self.assertEqual(cleanup.cleanup('worktrees', dry_run=True), 0)
+        self.assertTrue(path.exists())
+        self.assertIn('Last commit: unavailable', self.output.getvalue())
+
+    def test_open_pr_link_is_included_without_extra_lookup(self):
+        self.tree()
+        tip = self.git('rev-parse', 'topic')
+        url = 'https://github.com/example/repo/pull/1'
+        with self.pr(tip, state='OPEN', url=url), patch.object(cleanup, 'lookup_prs', wraps=cleanup.lookup_prs) as lookup:
+            self.assertEqual(cleanup.cleanup('worktrees', dry_run=True), 0)
+            lookup.assert_called_once_with('topic')
+        self.assertIn(f'[#1]({url})', self.output.getvalue())
+
+    def test_listing_keeps_files_and_shows_branches_dates_and_pr_links(self):
+        path = self.tree()
+        (path / 'local.txt').write_text('keep me')
+        tip = self.git('rev-parse', 'topic')
+        os.chdir(path)
+        url = 'https://github.com/example/repo/pull/1'
+        with self.pr(tip, state='OPEN', url=url), patch.object(cleanup, 'run', wraps=cleanup.run) as run:
+            self.assertEqual(cleanup.list_worktrees(color='never'), 0)
+        self.assertEqual((path / 'local.txt').read_text(), 'keep me')
+        self.assertEqual(self.git('rev-parse', 'topic'), tip)
+        report = self.output.getvalue()
+        self.assertIn('Worktrees (1)', report)
+        self.assertNotIn(' · main', report)
+        self.assertIn('topic space', report)
+        self.assertIn('[current]', report)
+        self.assertIn(f'[#1]({url})', report)
+        self.assertNotIn(str(self.root), report)
+        self.assertNotIn('Skipped', report)
+        self.assertFalse(any('fetch' in call.args or 'remove' in call.args for call in run.call_args_list))
+
+    def test_listing_primary_only_is_empty(self):
+        with patch.object(cleanup, 'lookup_prs') as lookup:
+            self.assertEqual(cleanup.list_worktrees(), 0)
+            lookup.assert_not_called()
+        self.assertIn('Worktrees (0)', self.output.getvalue())
+        self.assertNotIn('[current]', self.output.getvalue())
+
+    def test_listing_without_prs_handles_locked_detached_worktrees(self):
+        path = self.detached_tree()
+        self.git('worktree', 'lock', str(path))
+        with patch.object(cleanup, 'lookup_prs') as lookup:
+            self.assertEqual(cleanup.list_worktrees(include_prs=False), 0)
+            lookup.assert_not_called()
+        self.assertIn('detached HEAD [locked]', self.output.getvalue())
+
+    def test_listing_still_shows_worktrees_when_pr_lookup_fails(self):
+        self.tree()
+        with patch.object(cleanup, 'lookup_prs', side_effect=cleanup.VerificationError('offline')):
+            self.assertEqual(cleanup.list_worktrees(), 1)
+        self.assertIn('topic space', self.output.getvalue())
+        self.assertIn('PR lookup failed: offline', self.output.getvalue())
+
     def test_exact_names_and_occupied_branch(self):
         self.git('branch', 'domain-main-fix')
         path = self.tree()
@@ -480,7 +553,7 @@ class ReportTests(unittest.TestCase):
         })
 
     def test_report_groups_skip_reasons_and_preserves_failures(self):
-        rows = [cleanup.Outcome('first', 'Skipped', 'PR is OPEN'),
+        rows = [cleanup.Outcome('first', 'Skipped', 'PR is OPEN', '2026-10-16 12:30:00 -0700'),
                 cleanup.Outcome('broken', 'Failed', 'authentication failed'),
                 cleanup.Outcome('locked', 'Skipped', 'locked worktree'),
                 cleanup.Outcome('second', 'Skipped', 'PR is OPEN'),
@@ -489,12 +562,45 @@ class ReportTests(unittest.TestCase):
         with contextlib.redirect_stdout(output):
             cleanup.print_report(rows, 'worktrees')
         report = output.getvalue()
+        self.assertIn('Last commit: 2026-10-16 12:30:00', report)
+        self.assertNotIn('-0700', report)
         self.assertEqual(report.count('PR is OPEN'), 1)
         self.assertEqual(report.count('Skipped ('), 1)
         self.assertLess(report.index('second'), report.index('locked worktree'))
         self.assertIn('authentication failed', report)
         self.assertIn('1 removed, 0 would remove, 3 skipped, 1 failed', report)
         self.assertNotIn('\033[', report)
+
+    def test_skipped_rows_sort_by_instant_with_unknown_dates_last(self):
+        rows = [cleanup.Outcome('unknown', 'Skipped', 'open', 'unavailable'),
+                cleanup.Outcome('earlier', 'Skipped', 'open', '2026-11-01 01:45:00 -0700'),
+                cleanup.Outcome('z-tied', 'Skipped', 'open', '2026-11-01 01:15:00 -0800'),
+                cleanup.Outcome('a-tied', 'Skipped', 'open', '2026-11-01 01:15:00 -0800'),
+                cleanup.Outcome('other-group', 'Skipped', 'locked', '2026-12-01 00:00:00 +0000')]
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            cleanup.print_report(rows, 'worktrees')
+        report = output.getvalue()
+        expected = ['a-tied', 'z-tied', 'earlier', 'unknown', 'other-group']
+        positions = [report.index(name) for name in expected]
+        self.assertEqual(positions, sorted(positions))
+
+    def test_pr_links_are_clickable_in_terminal_and_plain_when_redirected(self):
+        url = 'https://github.com/example/repo/pull/42'
+        row = cleanup.Outcome('topic', 'Skipped', 'PR is OPEN',
+                              '2026-10-16 12:30:00 -0700', ((42, url),))
+        for terminal in (True, False):
+            with self.subTest(terminal=terminal):
+                output = io.StringIO()
+                with contextlib.redirect_stdout(output), patch.object(output, 'isatty', return_value=terminal), patch.dict(os.environ, {'TERM': 'xterm'}):
+                    cleanup.print_report([row], 'worktrees', color='never')
+                report = output.getvalue()
+                if terminal:
+                    self.assertIn(f'\033]8;;{url}\033\\#42\033]8;;\033\\', report)
+                else:
+                    self.assertIn(f'[#42]({url})', report)
+                    self.assertNotIn('\033', report)
+                self.assertIn('Last commit: 2026-10-16 12:30:00', report)
 
     def test_color_auto_respects_terminal_and_no_color(self):
         for terminal, no_color, expected in [(True, False, True), (False, False, False),
@@ -523,7 +629,7 @@ class ProgressTests(unittest.TestCase):
         with contextlib.redirect_stderr(output):
             with cleanup.Progress() as progress:
                 progress.update('Checking topic', 1, 2)
-        self.assertIn('Checking cleanup eligibility', output.getvalue())
+        self.assertIn('Fetching default branch', output.getvalue())
         self.assertNotIn('\033', output.getvalue())
         self.assertIsNone(progress.thread)
 

@@ -60,3 +60,7 @@ clean_merged_worktrees() {
 delete_merged_branches() {
   python3 "$DOTFILES_GIT_CLEANUP" branches "$@"
 }
+
+list_worktrees() {
+  python3 "$DOTFILES_GIT_CLEANUP" list "$@"
+}

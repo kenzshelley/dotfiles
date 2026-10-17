@@ -3,6 +3,7 @@
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from datetime import datetime
 import json
 import os
 from pathlib import Path
@@ -101,7 +102,7 @@ def lookup_prs(branch):
     """Fetch PR history for one exact branch name."""
     return json.loads(run(
         'gh', 'pr', 'list', '--head', branch, '--state', 'all', '--limit', '100',
-        '--json', 'number,state,headRefName,headRefOid,baseRefName,isCrossRepository',
+        '--json', 'number,url,state,headRefName,headRefOid,baseRefName,isCrossRepository',
     ))
 
 
@@ -144,6 +145,23 @@ class Outcome:
     name: str
     status: str
     detail: str = ''
+    last_commit: str = ''
+    prs: tuple[tuple[int, str], ...] = ()
+
+
+def commit_timestamps(tips):
+    """Read HEAD committer timestamps in local time using one Git invocation."""
+    tips = list(dict.fromkeys(tips))
+    if not tips:
+        return {}
+    result = subprocess.run(
+        ['git', 'log', '--no-walk', '--stdin', '--format=%H%x09%cd',
+         '--date=format-local:%Y-%m-%d %H:%M:%S %z'],
+        input='\n'.join(tips) + '\n', capture_output=True, text=True,
+    )
+    if result.returncode:
+        return {}
+    return dict(line.split('\t', 1) for line in result.stdout.splitlines())
 
 
 def worktree_names(trees):
@@ -159,6 +177,51 @@ def worktree_names(trees):
     return names
 
 
+def commit_sort_key(outcome):
+    """Sort newest first by instant, with unknown dates last and names breaking ties."""
+    try:
+        timestamp = datetime.strptime(outcome.last_commit, '%Y-%m-%d %H:%M:%S %z').timestamp()
+    except ValueError:
+        timestamp = float('-inf')
+    return -timestamp, outcome.name
+
+
+def display_commit_time(value):
+    """Hide the offset while preserving the already-local commit time."""
+    try:
+        return datetime.strptime(value, '%Y-%m-%d %H:%M:%S %z').strftime('%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        return value
+
+
+def print_table(rows):
+    """Render compact names, PR links, and wrapped details."""
+    if not rows:
+        return
+    hyperlinks = sys.stdout.isatty() and os.environ.get('TERM') != 'dumb'
+    pr_width = max(len(', '.join(f'#{number}' for number, _ in row.prs)) for row in rows)
+    name_width = min(48, max(12, max(len(row.name) for row in rows)))
+    detail_width = max(24, shutil.get_terminal_size((100, 24)).columns - name_width - pr_width - 8)
+    for row in rows:
+        names = textwrap.wrap(row.name, name_width, break_on_hyphens=False) or ['']
+        details = textwrap.wrap(row.detail, detail_width, break_on_hyphens=False) or ['']
+        for index in range(max(len(names), len(details))):
+            name = names[index] if index < len(names) else ''
+            detail = details[index] if index < len(details) else ''
+            links = []
+            if index == 0:
+                for number, url in row.prs:
+                    label = f'#{number}'
+                    links.append(f'\033]8;;{url}\033\\{label}\033]8;;\033\\'
+                                 if hyperlinks else label)
+            visible_width = len(', '.join(f'#{number}' for number, _ in row.prs)) if index == 0 else 0
+            pr_column = (', '.join(links) + ' ' * (pr_width - visible_width) + '  ') if pr_width else ''
+            print(f'  {name:<{name_width}}  {pr_column}{detail}'.rstrip())
+        if not hyperlinks:
+            for number, url in row.prs:
+                print(f'    [#{number}]({url})')
+
+
 def print_report(outcomes, mode, color='auto'):
     """Print results grouped by outcome and skip reason."""
     use_color = color == 'always' or (
@@ -170,17 +233,6 @@ def print_report(outcomes, mode, color='auto'):
     def paint(value, status):
         return f'\033[{colors[status]}m{value}\033[0m' if use_color else value
 
-    def table(rows):
-        name_width = min(48, max(12, max(len(row.name) for row in rows)))
-        detail_width = max(24, shutil.get_terminal_size((100, 24)).columns - name_width - 6)
-        for row in rows:
-            names = textwrap.wrap(row.name, name_width, break_on_hyphens=False) or ['']
-            details = textwrap.wrap(row.detail, detail_width, break_on_hyphens=False) or ['']
-            for index in range(max(len(names), len(details))):
-                name = names[index] if index < len(names) else ''
-                detail = details[index] if index < len(details) else ''
-                print(f'  {name:<{name_width}}  {detail}'.rstrip())
-
     print('Worktrees' if mode == 'worktrees' else 'Branches')
     for status in colors:
         rows = [row for row in outcomes if row.status == status]
@@ -189,11 +241,13 @@ def print_report(outcomes, mode, color='auto'):
         print('\n' + paint(f'{status} ({len(rows)})', status))
         if status == 'Skipped':
             for reason in dict.fromkeys(row.detail for row in rows):
-                group = [row for row in rows if row.detail == reason]
+                group = sorted((row for row in rows if row.detail == reason), key=commit_sort_key)
                 print(paint(f'  ── {reason} ({len(group)})', status))
-                table([Outcome(row.name, row.status) for row in group])
+                print_table([Outcome(row.name, row.status,
+                               'Last commit: ' + display_commit_time(row.last_commit) if row.last_commit else '',
+                               prs=row.prs) for row in group])
         else:
-            table(rows)
+            print_table(rows)
     counts = {status: sum(row.status == status for row in outcomes) for status in colors}
     print(f"\nCleanup: {counts['Deleted']} removed, {counts['Would delete']} would remove, "
           f"{counts['Skipped']} skipped, {counts['Failed']} failed")
@@ -214,8 +268,8 @@ def confirm(label, reasons):
 class Progress:
     """Animate terminal progress while network and Git operations run."""
 
-    def __init__(self):
-        self.message = 'Fetching default branch'
+    def __init__(self, message='Fetching default branch'):
+        self.message = message
         self.completed = 0
         self.total = 0
         self.started = time.monotonic()
@@ -230,7 +284,7 @@ class Progress:
             self.thread = threading.Thread(target=self.animate, daemon=True)
             self.thread.start()
         else:
-            print('Checking cleanup eligibility…', file=sys.stderr, flush=True)
+            print(self.message + '…', file=sys.stderr, flush=True)
         return self
 
     def update(self, message, completed=0, total=0):
@@ -303,6 +357,7 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
     ]
     outcomes = []
     names = worktree_names(trees)
+    timestamps = commit_timestamps(tip for _, tip, _ in candidates)
     lookups = {branch: pool.submit(lookup_prs, branch) for branch, _, tree in candidates
                if branch and not branch.startswith('backup/')
                and branch not in (default_branch, current_branch)
@@ -312,6 +367,7 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
         label = names[tree.path] if tree else branch
         progress.update('Checking ' + label, index, len(candidates))
         tree_removed = False
+        pr_links = ()
         protection = ''
         if branch and branch in (default_branch, current_branch):
             protection = 'default or current branch'
@@ -323,11 +379,15 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
         elif branch in occupied:
             protection = 'checked out in a worktree; use gwc'
         if protection:
-            outcomes.append(Outcome(label, 'Skipped', protection))
+            outcomes.append(Outcome(label, 'Skipped', protection, timestamps.get(tip, 'unavailable')))
             continue
         try:
             if branch:
                 prs = lookups[branch].result() if branch in lookups else None
+                matching = [pr for pr in (prs or [])
+                            if pr['headRefName'] == branch and not pr['isCrossRepository']]
+                linked = [pr for pr in matching if pr['state'] == 'OPEN'] or matching
+                pr_links = tuple((pr['number'], pr['url']) for pr in linked if pr.get('url'))
                 reason = merged_reason(branch, tip, default_ref, default_branch, prs)
             else:
                 reason = '' if is_ancestor(tip, default_ref) else (
@@ -335,7 +395,7 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
                 )
             reasons = [reason] if reason else []
             if reasons and not force:
-                outcomes.append(Outcome(label, 'Skipped', '; '.join(reasons)))
+                outcomes.append(Outcome(label, 'Skipped', '; '.join(reasons), timestamps.get(tip, 'unavailable'), pr_links))
                 continue
             discard_changes = False
             if tree:
@@ -350,7 +410,7 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
                 ):
                     reasons.append('worktree contains initialized submodules')
             if reasons and not force:
-                outcomes.append(Outcome(label, 'Skipped', '; '.join(reasons)))
+                outcomes.append(Outcome(label, 'Skipped', '; '.join(reasons), timestamps.get(tip, 'unavailable'), pr_links))
                 continue
             discard_notice = 'discarding modified or untracked files' if discard_changes else ''
             if dry_run:
@@ -370,7 +430,8 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
                 detail = 'force removal was not confirmed' if sys.stdin.isatty() else (
                     'force confirmation requires an interactive terminal'
                 )
-                outcomes.append(Outcome(label, 'Skipped', detail + '; ' + '; '.join(reasons)))
+                outcomes.append(Outcome(label, 'Skipped', detail + '; ' + '; '.join(reasons),
+                                        timestamps.get(tip, 'unavailable'), pr_links))
                 continue
             if branch and run('git', 'rev-parse', f'refs/heads/{branch}') != tip:
                 raise VerificationError('branch changed during cleanup; run again to reassess')
@@ -401,15 +462,69 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
     return int(any(row.status == 'Failed' for row in outcomes))
 
 
+def list_worktrees(color='auto', include_prs=True):
+    """List linked worktrees without fetching, changing branches, or cleaning files."""
+    trees = worktrees()[1:]
+    names = worktree_names(trees)
+    timestamps = commit_timestamps(tree.head for tree in trees)
+    current = run('git', 'rev-parse', '--show-toplevel')
+    rows = []
+    errors = []
+    with Progress('Listing worktrees') as progress, ThreadPoolExecutor(max_workers=2) as pool:
+        lookups = {tree.branch: pool.submit(lookup_prs, tree.branch) for tree in trees
+                   if include_prs and tree.branch}
+        for index, tree in enumerate(trees):
+            name = names[tree.path]
+            progress.update('Reading ' + name, index, len(trees))
+            links = ()
+            if tree.branch in lookups:
+                try:
+                    prs = [pr for pr in lookups[tree.branch].result()
+                           if pr['headRefName'] == tree.branch and not pr['isCrossRepository']]
+                    prs = [pr for pr in prs if pr['state'] == 'OPEN'] or prs
+                    links = tuple((pr['number'], pr['url']) for pr in prs if pr.get('url'))
+                except (VerificationError, ValueError, OSError, subprocess.CalledProcessError) as error:
+                    errors.append(f'{name}: PR lookup failed: {error}')
+            flags = []
+            if tree.path == current:
+                flags.append('current')
+            if tree.locked:
+                flags.append('locked')
+            branch = tree.branch or 'detached HEAD'
+            branch_label = tree.branch.removeprefix('mshelley.').rsplit('/', 1)[-1]
+            branch_detail = '' if tree.branch and branch_label == Path(tree.path).name else ' · ' + branch
+            suffix = ' [' + ', '.join(flags) + ']' if flags else ''
+            timestamp = timestamps.get(tree.head, 'unavailable')
+            rows.append(Outcome(name, '', display_commit_time(timestamp) + branch_detail + suffix,
+                                timestamp, links))
+    use_color = color == 'always' or (
+        color == 'auto' and sys.stdout.isatty()
+        and 'NO_COLOR' not in os.environ and os.environ.get('TERM') != 'dumb'
+    )
+    title = f'Worktrees ({len(rows)}) — newest first'
+    print('\033[36m' + title + '\033[0m' if use_color else title)
+    print_table(sorted(rows, key=commit_sort_key))
+    for error in errors:
+        print(error, file=sys.stderr)
+    return int(bool(errors))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('mode', choices=('branches', 'worktrees'))
+    parser.add_argument('mode', choices=('branches', 'worktrees', 'list'))
     parser.add_argument('--force', action='store_true', help='ask for y for each item requiring an override')
     parser.add_argument('--dry-run', action='store_true', help='preview cleanup without deleting or prompting (fetches origin)')
     parser.add_argument('--color', choices=('auto', 'always', 'never'), default='auto',
                         help='color output (default: auto; respects NO_COLOR)')
+    parser.add_argument('--no-pr', action='store_true', help='list worktrees without GitHub lookups')
     args = parser.parse_args()
+    if args.mode == 'list' and (args.force or args.dry_run):
+        parser.error('--force and --dry-run apply only to cleanup')
+    if args.no_pr and args.mode != 'list':
+        parser.error('--no-pr applies only to list')
     try:
+        if args.mode == 'list':
+            return list_worktrees(args.color, not args.no_pr)
         return cleanup(args.mode, args.force, args.dry_run, args.color)
     except (VerificationError, OSError, subprocess.CalledProcessError) as error:
         print(f'Cleanup aborted: {error}', file=sys.stderr)

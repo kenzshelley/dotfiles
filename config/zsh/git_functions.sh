@@ -64,3 +64,13 @@ delete_merged_branches() {
 list_worktrees() {
   python3 "$DOTFILES_GIT_CLEANUP" list "$@"
 }
+
+cdw() {
+  if (( $# != 1 )); then
+    print -u2 'usage: cdw <worktree-name>'
+    return 1
+  fi
+  local worktree_destination
+  worktree_destination=$(python3 "$DOTFILES_GIT_CLEANUP" path -- "$1") || return
+  builtin cd -- "$worktree_destination"
+}

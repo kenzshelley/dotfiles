@@ -134,7 +134,8 @@ class CleanupTests(unittest.TestCase):
         tip = self.git('rev-parse', 'topic')
         os.chdir(path)
         url = 'https://github.com/example/repo/pull/1'
-        with self.pr(tip, state='OPEN', url=url), patch.object(cleanup, 'run', wraps=cleanup.run) as run:
+        prs = {'topic': [dict(number=1, state='OPEN', url=url, headRefName='topic', isCrossRepository=False)]}
+        with patch.object(cleanup, 'lookup_worktree_prs', return_value=prs), patch.object(cleanup, 'run', wraps=cleanup.run) as run:
             self.assertEqual(cleanup.list_worktrees(color='never'), 0)
         self.assertEqual((path / 'local.txt').read_text(), 'keep me')
         self.assertEqual(self.git('rev-parse', 'topic'), tip)
@@ -149,7 +150,7 @@ class CleanupTests(unittest.TestCase):
         self.assertFalse(any('fetch' in call.args or 'remove' in call.args for call in run.call_args_list))
 
     def test_listing_primary_only_is_empty(self):
-        with patch.object(cleanup, 'lookup_prs') as lookup:
+        with patch.object(cleanup, 'lookup_worktree_prs') as lookup:
             self.assertEqual(cleanup.list_worktrees(), 0)
             lookup.assert_not_called()
         self.assertIn('Worktrees (0)', self.output.getvalue())
@@ -158,17 +159,46 @@ class CleanupTests(unittest.TestCase):
     def test_listing_without_prs_handles_locked_detached_worktrees(self):
         path = self.detached_tree()
         self.git('worktree', 'lock', str(path))
-        with patch.object(cleanup, 'lookup_prs') as lookup:
+        with patch.object(cleanup, 'lookup_worktree_prs') as lookup:
             self.assertEqual(cleanup.list_worktrees(include_prs=False), 0)
             lookup.assert_not_called()
         self.assertIn('detached HEAD [locked]', self.output.getvalue())
 
     def test_listing_still_shows_worktrees_when_pr_lookup_fails(self):
         self.tree()
-        with patch.object(cleanup, 'lookup_prs', side_effect=cleanup.VerificationError('offline')):
+        with patch.object(cleanup, 'lookup_worktree_prs', side_effect=cleanup.VerificationError('offline')):
             self.assertEqual(cleanup.list_worktrees(), 1)
         self.assertIn('topic space', self.output.getvalue())
         self.assertIn('PR lookup failed: offline', self.output.getvalue())
+
+    def test_cdw_changes_shell_directory_to_named_worktree_with_spaces(self):
+        path = self.tree()
+        functions = MODULE.with_name('git_functions.sh')
+        result = subprocess.run(
+            ['zsh', '-f', '-c', 'source "$1"; cdw "$2" || exit; pwd -P',
+             'test-cdw', str(functions), path.name], capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), str(path.resolve()))
+
+    def test_cdw_unknown_name_leaves_shell_directory_unchanged(self):
+        functions = MODULE.with_name('git_functions.sh')
+        result = subprocess.run(
+            ['zsh', '-f', '-c', 'source "$1"; cdw missing; cdw_result=$?; pwd -P; exit $cdw_result',
+             'test-cdw', str(functions)], capture_output=True, text=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip(), str(Path.cwd().resolve()))
+        self.assertIn('Unknown worktree', result.stderr)
+
+    def test_resolve_worktree_disambiguates_matching_names(self):
+        first = self.tree('one/topic')
+        second = self.tree('two/topic')
+        with self.assertRaisesRegex(cleanup.VerificationError, 'Ambiguous worktree'):
+            cleanup.resolve_worktree('topic space')
+        self.assertEqual(cleanup.resolve_worktree('one/topic space'), str(first.resolve()))
+        self.assertEqual(cleanup.resolve_worktree('two/topic space'), str(second.resolve()))
+        self.assertEqual(cleanup.resolve_worktree('repo'), str(Path.cwd()))
 
     def test_exact_names_and_occupied_branch(self):
         self.git('branch', 'domain-main-fix')
@@ -541,6 +571,41 @@ class CleanupTests(unittest.TestCase):
         branches = self.git('branch', '--format=%(refname:short)').splitlines()
         self.assertIn('backup/one', branches)
         self.assertNotIn('backup/two', branches)
+
+
+class BatchLookupTests(unittest.TestCase):
+    def test_branch_lookups_are_batched_and_preserve_empty_results(self):
+        branches = [f'topic-{i}' for i in range(26)]
+        calls = []
+        def run(*args):
+            calls.append(args)
+            if args[1:3] == ('repo', 'view'):
+                return json.dumps({'name': 'repo', 'owner': {'login': 'example'}})
+            query = next(arg for arg in args if arg.startswith('query='))
+            batch = branches[:25] if '"topic-0"' in query else branches[25:]
+            return json.dumps({'data': {'repository': {
+                f'b{i}': {'nodes': [dict(number=i + 1, headRefName=branch)] if i == 0 else []}
+                for i, branch in enumerate(batch)
+            }}})
+        with patch.object(cleanup, 'run', side_effect=run):
+            result = cleanup.lookup_worktree_prs(branches + branches[:1])
+        self.assertEqual(len(calls), 3)
+        self.assertEqual(set(result), set(branches))
+        self.assertEqual(result['topic-1'], [])
+        self.assertEqual(result['topic-25'][0]['headRefName'], 'topic-25')
+
+    def test_no_branches_need_no_github_requests(self):
+        with patch.object(cleanup, 'run') as run:
+            self.assertEqual(cleanup.lookup_worktree_prs([]), {})
+            run.assert_not_called()
+
+    def test_partial_response_is_reported_as_failure(self):
+        with patch.object(cleanup, 'run', side_effect=[
+            json.dumps({'name': 'repo', 'owner': {'login': 'example'}}),
+            json.dumps({'data': {'repository': {'b0': None}}}),
+        ]):
+            with self.assertRaisesRegex(cleanup.VerificationError, 'incomplete PR history'):
+                cleanup.lookup_worktree_prs(['topic'])
 
 
 class ReportTests(unittest.TestCase):

@@ -106,6 +106,40 @@ def lookup_prs(branch):
     ))
 
 
+def lookup_worktree_prs(branches):
+    """Fetch fresh PR links for up to 25 branches per GitHub request."""
+    branches = list(dict.fromkeys(branches))
+    if not branches:
+        return {}
+    repo = json.loads(run('gh', 'repo', 'view', '--json', 'name,owner'))
+    result = {}
+    for offset in range(0, len(branches), 25):
+        batch = branches[offset:offset + 25]
+        fields = 'number url state headRefName isCrossRepository'
+        connections = ' '.join(
+            f'b{index}: pullRequests(headRefName: {json.dumps(branch)}, first: 100, '
+            f'orderBy: {{field: UPDATED_AT, direction: DESC}}) {{ nodes {{ {fields} }} }}'
+            for index, branch in enumerate(batch)
+        )
+        query = (
+            'query($owner: String!, $name: String!) {'
+            ' repository(owner: $owner, name: $name) { ' + connections + ' } }'
+        )
+        response = json.loads(run(
+            'gh', 'api', 'graphql', '-f', 'query=' + query,
+            '-f', 'owner=' + repo['owner']['login'], '-f', 'name=' + repo['name'],
+        ))
+        repository = (response.get('data') or {}).get('repository')
+        if response.get('errors') or not repository:
+            raise VerificationError('GitHub could not return worktree PRs')
+        for index, branch in enumerate(batch):
+            connection = repository.get(f'b{index}')
+            if not connection or not isinstance(connection.get('nodes'), list):
+                raise VerificationError(f'GitHub returned incomplete PR history for {branch}')
+            result[branch] = connection['nodes']
+    return result
+
+
 def merged_reason(branch, tip, default_ref, default_branch, prs=None):
     if branch.startswith('backup/'):
         return 'backup branch retained for explicit review'
@@ -470,21 +504,22 @@ def list_worktrees(color='auto', include_prs=True):
     current = run('git', 'rev-parse', '--show-toplevel')
     rows = []
     errors = []
-    with Progress('Listing worktrees') as progress, ThreadPoolExecutor(max_workers=2) as pool:
-        lookups = {tree.branch: pool.submit(lookup_prs, tree.branch) for tree in trees
-                   if include_prs and tree.branch}
+    with Progress('Listing worktrees') as progress:
+        histories = {}
+        branches = [tree.branch for tree in trees if tree.branch]
+        if include_prs and branches:
+            progress.update('Loading PR links')
+            try:
+                histories = lookup_worktree_prs(branches)
+            except (VerificationError, ValueError, OSError, subprocess.CalledProcessError) as error:
+                errors.append(f'PR lookup failed: {error}')
         for index, tree in enumerate(trees):
             name = names[tree.path]
             progress.update('Reading ' + name, index, len(trees))
-            links = ()
-            if tree.branch in lookups:
-                try:
-                    prs = [pr for pr in lookups[tree.branch].result()
-                           if pr['headRefName'] == tree.branch and not pr['isCrossRepository']]
-                    prs = [pr for pr in prs if pr['state'] == 'OPEN'] or prs
-                    links = tuple((pr['number'], pr['url']) for pr in prs if pr.get('url'))
-                except (VerificationError, ValueError, OSError, subprocess.CalledProcessError) as error:
-                    errors.append(f'{name}: PR lookup failed: {error}')
+            prs = [pr for pr in histories.get(tree.branch, [])
+                   if pr['headRefName'] == tree.branch and not pr['isCrossRepository']]
+            prs = [pr for pr in prs if pr['state'] == 'OPEN'] or prs
+            links = tuple((pr['number'], pr['url']) for pr in prs if pr.get('url'))
             flags = []
             if tree.path == current:
                 flags.append('current')
@@ -509,25 +544,51 @@ def list_worktrees(color='auto', include_prs=True):
     return int(bool(errors))
 
 
+def resolve_worktree(name):
+    """Resolve a displayed worktree name in the current repository."""
+    trees = worktrees()
+    names = worktree_names(trees[1:])
+    matches = [path for path, label in names.items() if label == name]
+    if not matches:
+        ambiguous = [label for path, label in names.items() if Path(path).name == name]
+        if len(ambiguous) > 1:
+            raise VerificationError(f'Ambiguous worktree {name!r}; use: ' + ', '.join(ambiguous))
+        if trees and Path(trees[0].path).name == name:
+            matches = [trees[0].path]
+    if not matches:
+        raise VerificationError(f'Unknown worktree {name!r}; use gwl to see available names')
+    path = matches[0]
+    if not Path(path).is_dir():
+        raise VerificationError(f'Worktree {name!r} has no directory')
+    return path
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('mode', choices=('branches', 'worktrees', 'list'))
+    parser.add_argument('mode', choices=('branches', 'worktrees', 'list', 'path'))
+    parser.add_argument('name', nargs='?', help='worktree name for path lookup')
     parser.add_argument('--force', action='store_true', help='ask for y for each item requiring an override')
     parser.add_argument('--dry-run', action='store_true', help='preview cleanup without deleting or prompting (fetches origin)')
     parser.add_argument('--color', choices=('auto', 'always', 'never'), default='auto',
                         help='color output (default: auto; respects NO_COLOR)')
     parser.add_argument('--no-pr', action='store_true', help='list worktrees without GitHub lookups')
     args = parser.parse_args()
-    if args.mode == 'list' and (args.force or args.dry_run):
+    if (args.mode == 'path') != (args.name is not None):
+        parser.error('path requires a worktree name; other modes do not accept one')
+    if args.mode in ('list', 'path') and (args.force or args.dry_run):
         parser.error('--force and --dry-run apply only to cleanup')
     if args.no_pr and args.mode != 'list':
         parser.error('--no-pr applies only to list')
     try:
+        if args.mode == 'path':
+            print(resolve_worktree(args.name))
+            return 0
         if args.mode == 'list':
             return list_worktrees(args.color, not args.no_pr)
         return cleanup(args.mode, args.force, args.dry_run, args.color)
     except (VerificationError, OSError, subprocess.CalledProcessError) as error:
-        print(f'Cleanup aborted: {error}', file=sys.stderr)
+        label = 'cdw' if args.mode == 'path' else 'Cleanup aborted'
+        print(f'{label}: {error}', file=sys.stderr)
         return 1
 
 

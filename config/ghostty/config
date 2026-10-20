@@ -1,3 +1,16 @@
 window-padding-balance = false
 window-padding-y = 0
 desktop-notifications = true
+
+# Native pane navigation in Ghostty and cmux. Pass the key through at an edge.
+keybind = performable:ctrl+h=goto_split:left
+keybind = performable:ctrl+j=goto_split:down
+keybind = performable:ctrl+k=goto_split:up
+keybind = performable:ctrl+l=goto_split:right
+
+# smart-splits activates this table while Neovim owns the terminal.
+keybind = nvim/
+keybind = nvim/ctrl+h=text:\x08
+keybind = nvim/ctrl+j=text:\x0a
+keybind = nvim/ctrl+k=text:\x0b
+keybind = nvim/ctrl+l=text:\x0c

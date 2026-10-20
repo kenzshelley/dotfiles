@@ -20,8 +20,18 @@
 | `<C-f>` | Live grep across project (fzf-lua) |
 | `<C-b>` | Fuzzy buffer picker (fzf-lua) |
 | `<C-n>` | Toggle NERDTree file browser |
-| `<C-h/j/k/l>` | Navigate panes (vim-tmux-navigator, shared with tmux) |
-| `<C-\>` | Go to previous pane |
+| `<C-h/j/k/l>` | Navigate Neovim splits, then Ghostty/cmux panes at an edge; uses vim-tmux-navigator inside tmux |
+| `<C-\>` | Previous Neovim window in native terminals; previous pane in tmux |
+
+Native navigation uses smart-splits and backend-ghostty on macOS. Allow the
+terminal's macOS Automation request on first use. Run `:checkhealth smart-splits`
+to diagnose the connection. Neovim releases its terminal key table when suspended
+or closed. The directional mappings apply in Normal mode.
+
+The shared Ghostty config also binds Ctrl-h/j/k/l outside Neovim. With no native
+pane in that direction, the key passes through to the running application. Avoid
+mixing native terminal splits and tmux splits when using the same navigation keys:
+a native neighbor takes precedence over tmux. SSH sessions keep the tmux navigator.
 
 ### LSP (active in Python files)
 

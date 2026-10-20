@@ -73,6 +73,9 @@ return {
   -- Navigation
   {
     "christoomey/vim-tmux-navigator",
+    cond = function()
+      return not require("config.navigation").uses_native_splits()
+    end,
     cmd = {
       "TmuxNavigateLeft",
       "TmuxNavigateDown",
@@ -89,6 +92,31 @@ return {
       { "<C-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
       { "<C-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
     },
+  },
+
+  {
+    "smart-splits-nvim/smart-splits.nvim",
+    version = "^3.0.0",
+    lazy = false,
+    cond = function()
+      return require("config.navigation").uses_native_splits()
+    end,
+    dependencies = {
+      { "smart-splits-nvim/backend-ghostty", opts = {} },
+    },
+    opts = {
+      mux = { backend = "smart-splits-backend-ghostty" },
+      move = { at_edge = "stop" },
+    },
+    config = function(_, opts)
+      local splits = require("smart-splits")
+      splits.setup(opts)
+      vim.keymap.set("n", "<C-h>", splits.move_cursor_left, { desc = "Navigate left" })
+      vim.keymap.set("n", "<C-j>", splits.move_cursor_down, { desc = "Navigate down" })
+      vim.keymap.set("n", "<C-k>", splits.move_cursor_up, { desc = "Navigate up" })
+      vim.keymap.set("n", "<C-l>", splits.move_cursor_right, { desc = "Navigate right" })
+      vim.keymap.set("n", "<C-\\>", "<C-w>p", { desc = "Previous Neovim window" })
+    end,
   },
 
   -- Usability

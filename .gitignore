@@ -1,4 +1,7 @@
 config/nvim/.netrwhist
 config/nvim/package-lock.json
+config/claude/settings.json.bak
+__pycache__/
+*.py[cod]
 # per-project state created by the serena MCP server
 .serena/

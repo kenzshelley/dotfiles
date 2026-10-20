@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
+  "schemaVersion": 1,
+  "shortcuts": {
+    "bindings": {
+      "splitRight": ["ctrl+x", "h"],
+      "splitDown": ["ctrl+x", "v"],
+      "newSurface": ["ctrl+x", "c"],
+      "nextSurface": ["ctrl+x", "n"],
+      "prevSurface": ["ctrl+x", "p"]
+    }
+  }
+}

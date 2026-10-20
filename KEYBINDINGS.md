@@ -72,6 +72,24 @@ a native neighbor takes precedence over tmux. SSH sessions keep the tmux navigat
 
 ---
 
+## cmux
+
+Prefix: `Ctrl-X`, then release it and press the next key.
+
+| Key | Action |
+|-----|--------|
+| `<prefix> h` | Split right |
+| `<prefix> v` | Split down |
+| `<prefix> c` | New terminal tab in the current pane |
+| `<prefix> n` | Next tab in the current pane |
+| `<prefix> p` | Previous tab in the current pane |
+| `<C-h/j/k/l>` | Navigate panes, including Neovim splits |
+
+Tabs here are surfaces within a pane. Sidebar workspaces retain their default
+shortcuts. Creation and tab shortcuts live in `config/cmux/cmux.json`; the shared
+Ghostty config supplies directional navigation. Run `cmux reload-config` after
+editing. The prefix shortcuts replace the corresponding default cmux shortcuts.
+
 ## Tmux
 
 Prefix: `Ctrl-X`

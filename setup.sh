@@ -79,6 +79,8 @@ link "$DOTFILES/config/nvim"                 ~/.config/nvim
 link "$DOTFILES/config/zsh/.p10k.zsh"        ~/.p10k.zsh
 mkdir -p ~/.config/ghostty
 link "$DOTFILES/config/ghostty/config"  ~/.config/ghostty/config
+mkdir -p ~/.config/cmux
+link "$DOTFILES/config/cmux/cmux.json" ~/.config/cmux/cmux.json
 mkdir -p ~/.config/direnv
 link "$DOTFILES/config/direnv/direnv.toml" ~/.config/direnv/direnv.toml
 CURSOR_USER="$HOME/Library/Application Support/Cursor/User"

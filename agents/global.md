@@ -91,6 +91,21 @@ ask before proceeding.
 
 ## Dependencies and Tooling
 
+- Keep the computer responsive. Before starting CPU- or memory-heavy local
+  checks, inspect running jobs across agents and worktrees; defer heavy work if
+  another job is already consuming substantial resources.
+- Run heavy lint, test, and build commands sequentially. Default to at most two
+  workers per job and account for nested parallelism: a hook runner can launch
+  multiple linters, each of which launches its own workers. Bound concurrency at
+  every layer using documented controls; if that is not possible, use small
+  sequential file batches or CI.
+- In particular, do not run repository-wide `prek run -a actionlint` with default
+  parallelism. Concurrent actionlint instances can each spawn many ShellCheck
+  processes. Prefer checks scoped to changed files, and explicitly limit both
+  hook-runner and linter concurrency when a full check is required.
+- If a check causes a process explosion, memory pressure, or sustained swapping,
+  stop the job you launched and rerun with lower concurrency. Do not terminate
+  another agent's or the user's processes without permission.
 - Prefer the repository's existing package manager and command wrappers.
 - Do not add new dependencies unless they materially improve correctness,
   maintainability, or delivery speed.

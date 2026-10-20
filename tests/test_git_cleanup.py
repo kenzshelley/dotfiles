@@ -76,7 +76,8 @@ class CleanupTests(unittest.TestCase):
         nested.mkdir(parents=True)
         os.chdir(nested)
         self.assertTrue(cleanup.changes_included(tip, 'origin/main'))
-        self.assertEqual(cleanup.cleanup('worktrees'), 0)
+        with self.pr(self.git('rev-parse', 'topic')):
+            self.assertEqual(cleanup.cleanup('worktrees'), 0)
         self.assertFalse(path.exists())
 
     def test_open_pr_protects_already_included_branch(self):
@@ -204,34 +205,92 @@ class CleanupTests(unittest.TestCase):
         self.git('branch', 'domain-main-fix')
         path = self.tree()
         self.assertEqual(cleanup.cleanup('branches'), 0)
-        self.assertNotIn('domain-main-fix', self.git('branch', '--format=%(refname:short)').splitlines())
+        self.assertIn('domain-main-fix', self.git('branch', '--format=%(refname:short)').splitlines())
         self.assertTrue(path.exists())
         self.assertIn('use gwc', self.output.getvalue())
 
     def test_worktree_and_branch_removal(self):
         path = self.tree()
-        self.assertEqual(cleanup.cleanup('worktrees'), 0)
+        with self.pr(self.git('rev-parse', 'topic')):
+            self.assertEqual(cleanup.cleanup('worktrees'), 0)
         self.assertFalse(path.exists())
         self.assertNotIn('topic', self.git('branch', '--format=%(refname:short)').splitlines())
 
-    def test_eligible_dirty_worktree_is_removed_without_confirmation(self):
+    def test_eligible_dirty_worktree_is_retained_without_force(self):
         path = self.tree()
         (path / 'local.txt').write_text('local work')
-        with patch.object(cleanup, 'confirm') as confirm:
+        with self.pr(self.git('rev-parse', 'topic')), patch.object(cleanup, 'confirm') as confirm:
             self.assertEqual(cleanup.cleanup('worktrees'), 0)
             confirm.assert_not_called()
-        self.assertFalse(path.exists())
-        self.assertIn('discarding modified or untracked files', self.output.getvalue())
+        self.assertTrue(path.exists())
+        self.assertNotIn('discarding modified or untracked files', self.output.getvalue())
 
-    def test_closed_pr_with_unmerged_dirty_worktree_is_removed(self):
+    def test_fresh_worktree_without_pr_is_retained(self):
+        path = self.tree()
+        tip = self.git('rev-parse', 'topic')
+        self.assertEqual(cleanup.cleanup('worktrees'), 0)
+        self.assertTrue(path.exists())
+        self.assertEqual(self.git('rev-parse', 'topic'), tip)
+        self.assertIn('no matching PR', self.output.getvalue())
+
+    def test_locked_branch_worktree_is_protected_even_with_force(self):
+        path = self.tree()
+        self.git('worktree', 'lock', '--reason', 'Agent working', str(path))
+        with self.pr(self.git('rev-parse', 'topic')), patch.object(cleanup, 'confirm') as confirm:
+            self.assertEqual(cleanup.cleanup('worktrees', force=True), 0)
+            confirm.assert_not_called()
+        self.assertTrue(path.exists())
+        self.assertIn('locked worktree', self.output.getvalue())
+
+    def test_staged_changes_are_retained_after_merged_pr(self):
+        path = self.tree()
+        (path / 'local.txt').write_text('staged work')
+        self.git('-C', str(path), 'add', 'local.txt')
+        with self.pr(self.git('rev-parse', 'topic')):
+            self.assertEqual(cleanup.cleanup('worktrees'), 0)
+        self.assertEqual((path / 'local.txt').read_text(), 'staged work')
+        self.assertEqual(self.git('-C', str(path), 'show', ':local.txt'), 'staged work')
+
+    def test_dirty_worktree_requires_individual_force_confirmation(self):
+        path = self.tree()
+        (path / 'local.txt').write_text('local work')
+        with self.pr(self.git('rev-parse', 'topic')):
+            with patch('sys.stdin.isatty', return_value=False):
+                self.assertEqual(cleanup.cleanup('worktrees', force=True), 0)
+            self.assertTrue(path.exists())
+            with patch('sys.stdin.isatty', return_value=True), patch('builtins.input', return_value='n'):
+                self.assertEqual(cleanup.cleanup('worktrees', force=True), 0)
+            self.assertEqual((path / 'local.txt').read_text(), 'local work')
+            with patch('sys.stdin.isatty', return_value=True), patch('builtins.input', return_value='y'):
+                self.assertEqual(cleanup.cleanup('worktrees', force=True), 0)
+        self.assertFalse(path.exists())
+
+    def test_local_changes_created_during_verification_are_retained(self):
+        path = self.tree()
+        scans = 0
+        def run(*args):
+            nonlocal scans
+            if 'status' in args and Path(args[2]).resolve() == path.resolve():
+                scans += 1
+                if scans == 2:
+                    (path / 'local.txt').write_text('new work')
+            return original(*args)
+        with self.pr(self.git('rev-parse', 'topic')):
+            original = cleanup.run
+            with patch.object(cleanup, 'run', side_effect=run):
+                self.assertEqual(cleanup.cleanup('worktrees'), 1)
+        self.assertEqual((path / 'local.txt').read_text(), 'new work')
+        self.assertIn('acquired local changes', self.output.getvalue())
+
+    def test_closed_pr_with_unmerged_dirty_worktree_is_retained(self):
         path = self.tree()
         tip = self.commit_file(path, 'feature', b'unmerged work\n')
         (path / 'feature').write_text('local work')
         with self.pr(tip, state='CLOSED'), patch.object(cleanup, 'confirm') as confirm:
             self.assertEqual(cleanup.cleanup('worktrees'), 0)
             confirm.assert_not_called()
-        self.assertFalse(path.exists())
-        self.assertNotIn('topic', self.git('branch', '--format=%(refname:short)').splitlines())
+        self.assertTrue(path.exists())
+        self.assertIn('topic', self.git('branch', '--format=%(refname:short)').splitlines())
 
     def test_closed_pr_branch_with_unmerged_commits_is_removed(self):
         self.git('checkout', '-b', 'topic')
@@ -276,14 +335,15 @@ class CleanupTests(unittest.TestCase):
             confirm.assert_not_called()
         self.assertTrue(path.exists())
         self.assertIn('discarding modified or untracked files', self.output.getvalue())
-        self.assertNotIn('requires confirmation', self.output.getvalue())
+        self.assertIn('requires confirmation', self.output.getvalue())
 
     def test_ignored_files_do_not_block_removal(self):
         path = self.tree()
         (path / '.env').write_text('local config')
         Path('.git/info/exclude').write_text('.env\n')
         with patch.object(cleanup, 'confirm') as confirm:
-            self.assertEqual(cleanup.cleanup('worktrees'), 0)
+            with self.pr(self.git('rev-parse', 'topic')):
+                self.assertEqual(cleanup.cleanup('worktrees'), 0)
             confirm.assert_not_called()
         self.assertFalse(path.exists())
 
@@ -304,17 +364,20 @@ class CleanupTests(unittest.TestCase):
     def test_uninitialized_submodules_do_not_block_removal(self):
         path = self.submodule_tree()
         with patch.object(cleanup, 'confirm') as confirm:
-            self.assertEqual(cleanup.cleanup('worktrees'), 0)
+            with self.pr(self.git('rev-parse', 'topic')):
+                self.assertEqual(cleanup.cleanup('worktrees'), 0)
             confirm.assert_not_called()
         self.assertFalse(path.exists())
 
     def test_initialized_submodules_require_confirmation(self):
         path = self.submodule_tree(initialized=True)
-        self.assertEqual(cleanup.cleanup('worktrees'), 0)
+        with self.pr(self.git('rev-parse', 'topic')):
+            self.assertEqual(cleanup.cleanup('worktrees'), 0)
         self.assertTrue(path.exists())
         self.assertIn('initialized submodules', self.output.getvalue())
         with patch('sys.stdin.isatty', return_value=True), patch('builtins.input', return_value='y'):
-            self.assertEqual(cleanup.cleanup('worktrees', force=True), 0)
+            with self.pr(self.git('rev-parse', 'topic')):
+                self.assertEqual(cleanup.cleanup('worktrees', force=True), 0)
         self.assertFalse(path.exists())
 
     def detached_tree(self):
@@ -322,19 +385,19 @@ class CleanupTests(unittest.TestCase):
         self.git('worktree', 'add', '--detach', str(path))
         return path
 
-    def test_merged_detached_worktree_is_removed_without_pr_lookup(self):
+    def test_merged_detached_worktree_is_retained_without_pr_lookup(self):
         path = self.detached_tree()
         with patch.object(cleanup, 'merged_reason') as merged_reason:
             self.assertEqual(cleanup.cleanup('worktrees'), 0)
             merged_reason.assert_not_called()
-        self.assertFalse(path.exists())
+        self.assertTrue(path.exists())
 
     def test_unmerged_detached_worktree_requires_force_confirmation(self):
         path = self.detached_tree()
         self.commit_file(path, 'feature', b'unmerged work\n')
         self.assertEqual(cleanup.cleanup('worktrees'), 0)
         self.assertTrue(path.exists())
-        self.assertIn('detached HEAD is not an ancestor of origin/main', self.output.getvalue())
+        self.assertIn('detached HEAD has no matching PR', self.output.getvalue())
         with patch('sys.stdin.isatty', return_value=True), patch('builtins.input', return_value='n'):
             self.assertEqual(cleanup.cleanup('worktrees', force=True), 0)
         self.assertTrue(path.exists())
@@ -342,7 +405,7 @@ class CleanupTests(unittest.TestCase):
             self.assertEqual(cleanup.cleanup('worktrees', force=True), 0)
         self.assertFalse(path.exists())
 
-    def test_merged_detached_worktree_with_dirty_files_is_removed(self):
+    def test_merged_detached_worktree_with_dirty_files_is_retained(self):
         self.commit_file(Path.cwd(), 'tracked', b'committed\n')
         self.git('push', 'origin', 'main')
         path = self.detached_tree()
@@ -351,14 +414,14 @@ class CleanupTests(unittest.TestCase):
         with patch.object(cleanup, 'confirm') as confirm:
             self.assertEqual(cleanup.cleanup('worktrees'), 0)
             confirm.assert_not_called()
-        self.assertFalse(path.exists())
-        self.assertIn('discarding modified or untracked files', self.output.getvalue())
+        self.assertTrue(path.exists())
+        self.assertNotIn('discarding modified or untracked files', self.output.getvalue())
 
     def test_merged_detached_dry_run_retains_worktree(self):
         path = self.detached_tree()
         self.assertEqual(cleanup.cleanup('worktrees', dry_run=True), 0)
         self.assertTrue(path.exists())
-        self.assertIn('1 would remove', self.output.getvalue())
+        self.assertIn('0 would remove', self.output.getvalue())
 
     def test_detached_locked_worktree_stays_protected(self):
         path = self.detached_tree()
@@ -384,7 +447,7 @@ class CleanupTests(unittest.TestCase):
         self.git('-C', str(path), 'checkout', '--detach')
         self.assertEqual(cleanup.cleanup('worktrees'), 0)
         self.assertTrue(path.exists())
-        self.assertIn('initialized submodules', self.output.getvalue())
+        self.assertIn('detached HEAD has no matching PR', self.output.getvalue())
 
     def test_squash_merge_and_extra_commits(self):
         self.git('checkout', '-b', 'topic')
@@ -409,7 +472,7 @@ class CleanupTests(unittest.TestCase):
         self.git('commit', '-m', 'squashed feature')
         self.git('push', 'origin', 'main')
 
-    def test_squashed_multi_commit_branch_without_matching_pr(self):
+    def test_squashed_multi_commit_branch_without_matching_pr_is_retained(self):
         path = self.tree()
         self.commit_file(path, 'feature', b'first version\n')
         self.commit_file(path, 'feature', b'final version\n')
@@ -418,8 +481,8 @@ class CleanupTests(unittest.TestCase):
         self.git('push', 'origin', 'main')
         with patch.object(cleanup, 'run', wraps=cleanup.run) as run:
             self.assertEqual(cleanup.cleanup('worktrees'), 0)
-        self.assertFalse(path.exists())
-        self.assertNotIn('topic', self.git('branch', '--format=%(refname:short)').splitlines())
+        self.assertTrue(path.exists())
+        self.assertIn('topic', self.git('branch', '--format=%(refname:short)').splitlines())
         self.assertTrue(any(call.args[0] == 'gh' for call in run.call_args_list))
 
     def test_squash_with_extra_local_commit_is_retained(self):
@@ -432,13 +495,14 @@ class CleanupTests(unittest.TestCase):
         self.assertTrue(path.exists())
         self.assertIn('topic', self.git('branch', '--format=%(refname:short)').splitlines())
 
-    def test_squash_with_dirty_files_is_removed(self):
+    def test_squash_with_dirty_files_is_retained(self):
         path = self.tree()
         self.commit_file(path, 'feature', b'merged\n')
         self.squash()
         (path / 'feature').write_text('uncommitted work')
-        self.assertEqual(cleanup.cleanup('worktrees'), 0)
-        self.assertFalse(path.exists())
+        with self.pr(self.git('rev-parse', 'topic')):
+            self.assertEqual(cleanup.cleanup('worktrees'), 0)
+        self.assertTrue(path.exists())
 
     def test_older_local_tip_of_merged_pr_is_recognized(self):
         path = self.tree()
@@ -502,7 +566,8 @@ class CleanupTests(unittest.TestCase):
         path = self.tree()
         self.commit_file(path, 'feature', b'merged\n')
         self.squash()
-        self.assertEqual(cleanup.cleanup('worktrees', dry_run=True), 0)
+        with self.pr(self.git('rev-parse', 'topic')):
+            self.assertEqual(cleanup.cleanup('worktrees', dry_run=True), 0)
         self.assertTrue(path.exists())
         self.assertIn('topic', self.git('branch', '--format=%(refname:short)').splitlines())
         self.assertIn('1 would remove', self.output.getvalue())

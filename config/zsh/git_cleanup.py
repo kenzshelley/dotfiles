@@ -1,4 +1,4 @@
-"""Clean merged or closed-PR branches/worktrees, discarding local file changes."""
+"""Clean branches/worktrees with merged or closed PRs, preserving local file changes."""
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
@@ -150,10 +150,10 @@ def merged_reason(branch, tip, default_ref, default_branch, prs=None):
         return 'PR is OPEN; retained until explicitly closed or merged'
     if prs and all(pr['state'] == 'CLOSED' for pr in prs):
         return ''
+    if not prs:
+        return 'no matching PR that is merged or closed; retained for explicit review'
     if changes_included(tip, default_ref):
         return ''
-    if not prs:
-        return 'no matching PR and branch changes are not fully present in the default branch'
     if len(prs) != 1:
         return 'multiple PRs use this branch; merge status is ambiguous'
     pr = prs[0]
@@ -424,9 +424,7 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
                 pr_links = tuple((pr['number'], pr['url']) for pr in linked if pr.get('url'))
                 reason = merged_reason(branch, tip, default_ref, default_branch, prs)
             else:
-                reason = '' if is_ancestor(tip, default_ref) else (
-                    f'detached HEAD is not an ancestor of {default_ref}; retained for explicit review'
-                )
+                reason = 'detached HEAD has no matching PR; retained for explicit review'
             reasons = [reason] if reason else []
             if reasons and not force:
                 outcomes.append(Outcome(label, 'Skipped', '; '.join(reasons), timestamps.get(tip, 'unavailable'), pr_links))
@@ -435,8 +433,10 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
             if tree:
                 if not Path(tree.path).is_dir():
                     raise VerificationError('worktree directory is missing; inspect git worktree prune --dry-run')
-                changes = run('git', '-C', tree.path, 'status', '--porcelain')
+                changes = run('git', '-C', tree.path, 'status', '--porcelain', '--untracked-files=all')
                 discard_changes = bool(changes)
+                if discard_changes:
+                    reasons.append('worktree contains modified or untracked files')
                 entries = run('git', '-C', tree.path, 'ls-files', '--stage', '-z')
                 if any(
                     (Path(tree.path) / entry.split('\t', 1)[1] / '.git').exists()
@@ -473,6 +473,10 @@ def perform_cleanup(mode, force, dry_run, color, progress, pool):
                 latest = next((item for item in worktrees() if item.path == tree.path), None)
                 if latest != tree:
                     raise VerificationError('worktree changed during cleanup; run again to reassess')
+                if not reasons and run(
+                    'git', '-C', tree.path, 'status', '--porcelain', '--untracked-files=all'
+                ):
+                    raise VerificationError('worktree acquired local changes during cleanup; retained')
                 command = ['git', 'worktree', 'remove']
                 if reasons or discard_changes:
                     command.append('--force')

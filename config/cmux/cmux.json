@@ -9,5 +9,8 @@
       "nextSurface": ["ctrl+x", "n"],
       "prevSurface": ["ctrl+x", "p"]
     }
+  },
+  "app": {
+    "minimalMode": true
   }
 }

@@ -80,15 +80,36 @@ Prefix: `Ctrl-X`, then release it and press the next key.
 |-----|--------|
 | `<prefix> h` | Split right |
 | `<prefix> v` | Split down |
-| `<prefix> c` | New terminal tab in the current pane |
-| `<prefix> n` | Next tab in the current pane |
-| `<prefix> p` | Previous tab in the current pane |
+| `<prefix> c` | New workspace |
+| `<prefix> ,` | Rename workspace |
+| `<prefix> n` | Next workspace |
+| `<prefix> p` | Previous workspace |
+| `Cmd-T` | New terminal tab in the current pane |
+| `Cmd-Shift-]` | Next tab in the current pane |
+| `Cmd-Shift-[` | Previous tab in the current pane |
 | `<C-h/j/k/l>` | Navigate panes, including Neovim splits |
 
-Tabs here are surfaces within a pane. Sidebar workspaces retain their default
-shortcuts. Creation and tab shortcuts live in `config/cmux/cmux.json`; the shared
+Workspaces act like tmux windows: each has its own pane layout. Tabs are surfaces
+within a pane and use cmux's default shortcuts. Workspace creation, renaming, navigation, and
+split shortcuts live in `config/cmux/cmux.json`; the shared
 Ghostty config supplies directional navigation. Run `cmux reload-config` after
 editing. The prefix shortcuts replace the corresponding default cmux shortcuts.
+
+Agent status icons use blue for working, amber for waiting/attention, green for
+idle/completed, and red for errors. `config/cmux/automations.json` is linked to
+`~/.cmuxterm/automations.json` and runs `config/cmux/agent_status.py` on native
+Codex/Claude status updates. Each row includes the agent name, state, and model
+(when available in the matching local session transcript). A second rule removes
+the program-status row only when it repeats a visible Codex/Claude entry; other
+program statuses remain visible. Run `cmux automation reload` after changing rules.
+
+New Codex/Claude sessions get a tab title when their first prompt is submitted,
+using only that prompt in a short, tool-free Codex naming call. A single
+persistent tab rename avoids temporary-title flicker. Workspace names and manual tab
+titles are preserved. `config/cmux/name_agent_tab.py` records attempts in
+`~/.local/state/cmux/tab-naming.json`; existing sessions are excluded at
+installation, and failed attempts are not retried. Built-in workspace
+auto-naming is disabled so it cannot refresh these names later.
 
 ## Tmux
 

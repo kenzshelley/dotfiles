@@ -81,6 +81,13 @@ mkdir -p ~/.config/ghostty
 link "$DOTFILES/config/ghostty/config"  ~/.config/ghostty/config
 mkdir -p ~/.config/cmux
 link "$DOTFILES/config/cmux/cmux.json" ~/.config/cmux/cmux.json
+link "$DOTFILES/config/cmux/agent_status.py" ~/.config/cmux/agent_status.py
+link "$DOTFILES/config/cmux/name_agent_tab.py" ~/.config/cmux/name_agent_tab.py
+mkdir -p ~/.cmuxterm
+link "$DOTFILES/config/cmux/automations.json" ~/.cmuxterm/automations.json
+if [ ! -e ~/.local/state/cmux/tab-naming.json ]; then
+    /usr/bin/python3 "$DOTFILES/config/cmux/name_agent_tab.py" --seed-existing
+fi
 mkdir -p ~/.config/direnv
 link "$DOTFILES/config/direnv/direnv.toml" ~/.config/direnv/direnv.toml
 CURSOR_USER="$HOME/Library/Application Support/Cursor/User"

@@ -3,14 +3,71 @@
   "schemaVersion": 1,
   "shortcuts": {
     "bindings": {
-      "splitRight": ["ctrl+x", "h"],
-      "splitDown": ["ctrl+x", "v"],
-      "newSurface": ["ctrl+x", "c"],
-      "nextSurface": ["ctrl+x", "n"],
-      "prevSurface": ["ctrl+x", "p"]
+      "splitRight": [
+        "ctrl+x",
+        "h"
+      ],
+      "splitDown": [
+        "ctrl+x",
+        "v"
+      ],
+      "newTab": [
+        "ctrl+x",
+        "c"
+      ],
+      "renameWorkspace": [
+        "ctrl+x",
+        ","
+      ],
+      "nextSidebarTab": [
+        "ctrl+x",
+        "n"
+      ],
+      "prevSidebarTab": [
+        "ctrl+x",
+        "p"
+      ],
+      "toggleSplitZoom": [
+        "ctrl+x",
+        "z"
+      ],
+      "equalizeSplits": [
+        "ctrl+x",
+        "="
+      ],
+      "toggleTerminalCopyMode": [
+        "ctrl+x",
+        "["
+      ]
     }
   },
+  "sidebar": {
+    "stackBranchDirectory": false,
+    "showAgentUsage": true,
+    "wrapWorkspaceTitles": true,
+    "notificationMessageLineLimit": 2,
+    "showPorts": false,
+    "showLog": false,
+    "compactAgentStatus": false,
+    "loadingSpinnerPosition": "trailing",
+    "notificationBadgePosition": "leading"
+  },
+  "automation": {
+    "socketControlMode": "automation",
+    "workspaceAutoNaming": false
+  },
   "app": {
-    "minimalMode": true
+    "minimalMode": true,
+    "reorderOnNotification": false,
+    "iMessageMode": false
+  },
+  "notifications": {
+    "hooks": [
+      {
+        "id": "conductor-native-clicks",
+        "command": "/usr/bin/python3 \"$HOME/.config/cmux/conductor-sidebar/adapter.py\" --notification",
+        "timeoutSeconds": 120
+      }
+    ]
   }
 }

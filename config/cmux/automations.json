@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "agent-status-colors",
+      "when": {
+        "event": "sidebar.metadata.updated"
+      },
+      "where": {
+        "command": "set_status"
+      },
+      "rate_limit": {
+        "interval_seconds": 1,
+        "maximum": 100
+      },
+      "then": [
+        {
+          "action": "run",
+          "command": "/usr/bin/python3 \"$HOME/.config/cmux/agent_status.py\"",
+          "timeout_seconds": 5
+        }
+      ]
+    },
+    {
+      "id": "agent-status-deduplicate",
+      "when": {
+        "event": "program_status.changed"
+      },
+      "rate_limit": {
+        "interval_seconds": 1,
+        "maximum": 100
+      },
+      "then": [
+        {
+          "action": "run",
+          "command": "/usr/bin/python3 \"$HOME/.config/cmux/agent_status.py\"",
+          "timeout_seconds": 5
+        }
+      ]
+    },
+    {
+      "id": "agent-tab-name-first-prompt",
+      "when": {
+        "event": "agent.hook.UserPromptSubmit"
+      },
+      "rate_limit": {
+        "interval_seconds": 1,
+        "maximum": 100
+      },
+      "then": [
+        {
+          "action": "run",
+          "command": "/usr/bin/python3 \"$HOME/.config/cmux/name_agent_tab.py\"",
+          "timeout_seconds": 75
+        }
+      ]
+    },
+    {
+      "id": "conductor-native-status",
+      "when": {
+        "event": "sidebar.metadata.*"
+      },
+      "rate_limit": {
+        "interval_seconds": 1,
+        "maximum": 100
+      },
+      "then": [
+        {
+          "action": "run",
+          "command": "/usr/bin/python3 \"$HOME/.config/cmux/conductor-sidebar/adapter.py\"",
+          "timeout_seconds": 10
+        }
+      ],
+      "where": {
+        "command": {
+          "in": [
+            "set_status",
+            "clear_status"
+          ]
+        }
+      }
+    },
+    {
+      "id": "conductor-native-surfaces",
+      "when": {
+        "event": "surface.*"
+      },
+      "rate_limit": {
+        "interval_seconds": 1,
+        "maximum": 100
+      },
+      "then": [
+        {
+          "action": "run",
+          "command": "/usr/bin/python3 \"$HOME/.config/cmux/conductor-sidebar/adapter.py\"",
+          "timeout_seconds": 10
+        }
+      ]
+    },
+    {
+      "id": "conductor-native-workspaces",
+      "when": {
+        "event": "workspace.closed"
+      },
+      "rate_limit": {
+        "interval_seconds": 1,
+        "maximum": 100
+      },
+      "then": [
+        {
+          "action": "run",
+          "command": "/usr/bin/python3 \"$HOME/.config/cmux/conductor-sidebar/adapter.py\"",
+          "timeout_seconds": 10
+        }
+      ]
+    },
+    {
+      "id": "conductor-native-lifecycle",
+      "when": {
+        "event": "agent.hook.*"
+      },
+      "where": {
+        "phase": "completed"
+      },
+      "rate_limit": {
+        "interval_seconds": 1,
+        "maximum": 100
+      },
+      "then": [
+        {
+          "action": "run",
+          "command": "/usr/bin/python3 \"$HOME/.config/cmux/conductor-sidebar/adapter.py\"",
+          "timeout_seconds": 10
+        }
+      ]
+    }
+  ]
+}

@@ -1,15 +1,10 @@
-# Avoid cmux's blank-terminal bug when Base16 sets the background before first display.
-if [[ -n "${CMUX_WORKSPACE_ID:-}" ]]; then
-  export BASE16_SHELL_SET_BACKGROUND=false
-fi
-
 # Enable Powerlevel10k instant prompt. Must be near the top, before any output.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 # antidote
-source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+source "$HOMEBREW_PREFIX/opt/antidote/share/antidote/antidote.zsh"
 antidote load ~/.zsh_plugins.txt
 
 bindkey '^[[A' history-substring-search-up
@@ -193,7 +188,10 @@ find_big_dirs() {
 ftmf
 
 source ~/.p10k.zsh
-base16_material
+if [[ -z "${CMUX_WORKSPACE_ID:-}" && "${TERM_PROGRAM:-}" != ghostty ]]; then
+  source ~/.config/base16-shell/base16-shell.plugin.zsh
+  base16_material
+fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

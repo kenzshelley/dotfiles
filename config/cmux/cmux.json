@@ -53,6 +53,7 @@
     "notificationBadgePosition": "leading"
   },
   "automation": {
+    "claudeCodeIntegration": false,
     "socketControlMode": "automation",
     "workspaceAutoNaming": false
   },

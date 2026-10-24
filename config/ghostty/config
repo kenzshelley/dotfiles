@@ -1,6 +1,8 @@
 window-padding-balance = false
 window-padding-y = 0
 desktop-notifications = true
+unfocused-split-opacity = 1
+theme = Material Darker
 
 # Native pane navigation in Ghostty and cmux. Pass the key through at an edge.
 keybind = performable:ctrl+h=goto_split:left

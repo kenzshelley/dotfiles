@@ -1,0 +1,8 @@
+{
+  "$schema": "https://pi.dev/schemas/keybindings.schema.json",
+  "tui.editor.cursorUp": ["up", "ctrl+p"],
+  "tui.editor.cursorDown": ["down", "ctrl+n"],
+  "app.model.cycleForward": [],
+  "tui.input.newLine": ["shift+enter", "ctrl+j", "alt+enter"],
+  "app.message.followUp": []
+}

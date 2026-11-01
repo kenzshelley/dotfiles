@@ -190,7 +190,7 @@ ftmf
 source ~/.p10k.zsh
 if [[ -z "${CMUX_WORKSPACE_ID:-}" && "${TERM_PROGRAM:-}" != ghostty ]]; then
   source ~/.config/base16-shell/base16-shell.plugin.zsh
-  base16_material
+  _base16 "$BASE16_SHELL/scripts/base16-material.sh" material
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

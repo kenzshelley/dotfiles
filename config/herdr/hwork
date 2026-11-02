@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+task=${1:-}
+if (( $# )); then shift; fi
+agent_argv=""
+if (( $# )); then
+  if (( $# != 2 )) || [[ "$1" != --agent-argv ]]; then
+    printf 'Usage: hwork [name] [--agent-argv JSON]\n' >&2
+    exit 2
+  fi
+  agent_argv=$2
+fi
+if [[ -z "$task" ]]; then
+  read -r -p 'Worktree name: ' task || exit 1
+fi
+if [[ ! "$task" =~ ^[a-z][a-z0-9_-]{0,31}$ ]]; then
+  printf 'Use 1–32 lowercase letters, digits, underscores or hyphens, starting with a letter.\n' >&2
+  exit 2
+fi
+
+for dependency in git herdr-app jq; do
+  command -v "$dependency" >/dev/null || {
+    printf 'Required command missing: %s\n' "$dependency" >&2
+    exit 1
+  }
+done
+agent=${HWORK_AGENT:-pi}
+if [[ -z "$agent_argv" ]]; then
+  command -v "$agent" >/dev/null || {
+    printf 'Agent command missing: %s\n' "$agent" >&2
+    exit 1
+  }
+  agent_argv=$(jq -cn --arg agent "$agent" '[$agent]')
+fi
+printf '%s' "$agent_argv" | jq -e 'type == "array" and length > 0 and all(.[]; type == "string" and length > 0)' >/dev/null
+
+git rev-parse --show-toplevel >/dev/null
+common_dir=$(git rev-parse --git-common-dir)
+repo_name=$(basename "$(cd "$common_dir/.." && pwd -P)")
+checkout="$HOME/programming/worktrees/$repo_name/$task"
+
+branch="mshelley.$task"
+if git show-ref --verify --quiet "refs/heads/$branch"; then
+  git worktree add "$checkout" "$branch" >&2
+else
+  git worktree add -b "$branch" "$checkout" HEAD >&2
+fi
+
+printf 'Worktree: %s\n' "$checkout" >&2
+args=$(jq -n --arg folder "$checkout" --arg task "$task" --argjson argv "$agent_argv" \
+  '{folder: $folder, tab: $task, argv: $argv}')
+if ! herdr-app 'do' space.new "$args"; then
+  printf 'Could not open the desktop Space. The worktree remains at %s.\n' "$checkout" >&2
+  exit 1
+fi

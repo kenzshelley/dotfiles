@@ -75,6 +75,12 @@ DOTFILES="$(pwd)"
 link "$DOTFILES/config/zsh/zshrc"             ~/.zshrc
 link "$DOTFILES/config/zsh/.zsh_plugins.txt" ~/.zsh_plugins.txt
 link "$DOTFILES/config/tmux/tmux.conf"       ~/.tmux.conf
+mkdir -p ~/.local/bin
+link "$DOTFILES/config/herdr/hwork" ~/.local/bin/hwork
+mkdir -p ~/.config/herdr-app/mods ~/.config/herdr-app/layouts
+link "$DOTFILES/config/herdr-app/mods/hwork" ~/.config/herdr-app/mods/hwork
+link "$DOTFILES/config/herdr-app/mods/hwork-spaces" ~/.config/herdr-app/mods/hwork-spaces
+link "$DOTFILES/config/herdr-app/layouts/hwork-main.json" ~/.config/herdr-app/layouts/hwork-main.json
 link "$DOTFILES/config/nvim"                 ~/.config/nvim
 link "$DOTFILES/config/zsh/.p10k.zsh"        ~/.p10k.zsh
 mkdir -p ~/.config/ghostty

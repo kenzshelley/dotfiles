@@ -105,6 +105,7 @@ link "$DOTFILES/agents/global.md" ~/.codex/AGENTS.md
 link "$DOTFILES/agents/global.md" ~/.claude/CLAUDE.md
 link "$DOTFILES/config/claude/settings.json" ~/.claude/settings.json
 mkdir -p ~/.pi/agent
+link "$DOTFILES/agents/global.md" ~/.pi/agent/AGENTS.md
 link "$DOTFILES/config/pi/keybindings.json" ~/.pi/agent/keybindings.json
 
 # Wire up git delta config without overwriting ~/.gitconfig credentials

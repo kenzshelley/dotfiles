@@ -75,6 +75,7 @@ pr_warning() {
 
 
 # Aliases
+alias oc='opencode'
 alias gpr='gh pr create --web' 
 alias vi='nvim'
 alias gl='git log'

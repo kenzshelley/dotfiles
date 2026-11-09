@@ -5,3 +5,7 @@ __pycache__/
 *.py[cod]
 # per-project state created by the serena MCP server
 .serena/
+
+# Runtime-generated terminal and editor files
+config/cmux/*.cmux-write.lock
+config/herdr-app/mods/**/gpui-kit.d.ts

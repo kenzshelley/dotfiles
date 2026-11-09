@@ -20,7 +20,7 @@
 | `<C-f>` | Live grep across project (fzf-lua) |
 | `<C-b>` | Fuzzy buffer picker (fzf-lua) |
 | `<C-n>` | Toggle NERDTree file browser |
-| `<C-h/j/k/l>` | Navigate Neovim splits, then Ghostty/cmux panes at an edge; uses vim-tmux-navigator inside tmux |
+| `<C-h/j/k/l>` | Navigate Neovim splits, then Herdr or Ghostty/cmux panes at an edge; uses vim-tmux-navigator inside tmux |
 | `<C-\>` | Previous Neovim window in native terminals; previous pane in tmux |
 
 Native navigation uses smart-splits and backend-ghostty on macOS. Allow the
@@ -71,6 +71,37 @@ a native neighbor takes precedence over tmux. SSH sessions keep the tmux navigat
 | `:GBrowse` | Open file on GitHub |
 
 ---
+
+## Herdr
+
+Config: `config/herdr/config.toml`, linked to `~/.config/herdr/config.toml`.
+Prefix: `Ctrl-X`, then release it and press the next key.
+
+| Key | Action |
+|-----|--------|
+| `<prefix> h` / `<prefix> v` | Split right / down, inheriting the current directory |
+| `<prefix> Ctrl-h` / `j` / `k` / `l` | Resize left / down / up / right using Herdr's step size |
+| `<C-h/j/k/l>` | Navigate Neovim splits and Herdr panes |
+| `<prefix> Left/Down/Up/Right` | Focus a Herdr pane directly |
+| `<prefix> c` / `,` | Create / rename a tab |
+| `<prefix> n` / `p` / `1–9` | Next / previous / numbered tab |
+| `<prefix> &` / `x` | Close tab / pane |
+| `<prefix> o` / `;` | Next / previous focused pane |
+| `<prefix> z` | Toggle pane zoom |
+| `<prefix> [` then `v`, `y` | Copy mode, select, copy |
+| `<prefix> s` / `w` | Workspace picker / pane navigator |
+| `<prefix> R` / `d` | Reload config / detach |
+
+Seamless navigation uses `lmilojevicc/herdr-splits.nvim` on both sides.
+`setup.sh` installs the Herdr plugin when Herdr is available; lazy.nvim installs
+the Neovim side. Restart Neovim after changing its plugin configuration. Run
+`:checkhealth herdr-splits` inside Herdr to diagnose navigation. Navigation stops
+at an outer edge. Keep Herdr in one native terminal pane: Ghostty's existing
+Ctrl-h/j/k/l shortcuts take precedence if it has native neighboring panes.
+
+Herdr does not reproduce tmux's repeated resize-key mode, `r` renumbering, `e`
+even-horizontal layout, or tmux-fingers on `F`. Update both plugin installations
+together with `herdr plugin update herdr-splits` and `:Lazy update herdr-splits.nvim`.
 
 ## cmux
 

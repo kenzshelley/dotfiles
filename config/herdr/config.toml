@@ -1,0 +1,75 @@
+onboarding = false
+
+[terminal]
+new_cwd = "follow"
+
+[keys]
+prefix = "ctrl+x"
+split_vertical = "prefix+h"
+split_horizontal = "prefix+v"
+resize_pane_left = "prefix+ctrl+h"
+resize_pane_down = "prefix+j"
+resize_pane_up = "prefix+k"
+resize_pane_right = "prefix+l"
+
+# Free h/j/k/l for the tmux split and resize bindings.
+focus_pane_left = "prefix+left"
+focus_pane_down = "prefix+down"
+focus_pane_up = "prefix+up"
+focus_pane_right = "prefix+right"
+cycle_pane_next = "prefix+o"
+last_pane = "prefix+semicolon"
+zoom = "prefix+z"
+close_pane = "prefix+x"
+copy_mode = "prefix+["
+
+new_tab = "prefix+c"
+rename_tab = "prefix+comma"
+previous_tab = "prefix+p"
+next_tab = "prefix+n"
+switch_tab = "prefix+1..9"
+close_tab = "prefix+ampersand"
+workspace_picker = "prefix+s"
+goto = "prefix+w"
+settings = "prefix+shift+s"
+detach = "prefix+d"
+reload_config = "prefix+shift+r"
+
+# Herdr has no equivalent for tmux's renumber (r) or even-horizontal layout (e).
+resize_mode = ""
+edit_scrollback = ""
+
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "herdr-splits.nav-left"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "herdr-splits.nav-down"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "herdr-splits.nav-up"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "herdr-splits.nav-right"
+
+[[keys.command]]
+key = "prefix+f"
+type = "plugin_action"
+command = "herdr-file-viewer.open-file-viewer"
+description = "open file viewer in split"
+
+[[keys.command]]
+key = "prefix+r"
+type = "pane"
+command = 'herdr pane zoom --current --off >/dev/null && exec tuicr -r main..HEAD'
+description = "review branch changes against main"
+
+[ui]
+prompt_new_tab_name = false

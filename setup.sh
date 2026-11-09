@@ -75,12 +75,18 @@ DOTFILES="$(pwd)"
 link "$DOTFILES/config/zsh/zshrc"             ~/.zshrc
 link "$DOTFILES/config/zsh/.zsh_plugins.txt" ~/.zsh_plugins.txt
 link "$DOTFILES/config/tmux/tmux.conf"       ~/.tmux.conf
+mkdir -p ~/.config/herdr
+link "$DOTFILES/config/herdr/config.toml" ~/.config/herdr/config.toml
 mkdir -p ~/.local/bin
 link "$DOTFILES/config/herdr/hwork" ~/.local/bin/hwork
-mkdir -p ~/.config/herdr-app/mods ~/.config/herdr-app/layouts
+mkdir -p ~/.config/herdr-app/mods
 link "$DOTFILES/config/herdr-app/mods/hwork" ~/.config/herdr-app/mods/hwork
 link "$DOTFILES/config/herdr-app/mods/hwork-spaces" ~/.config/herdr-app/mods/hwork-spaces
+mkdir -p ~/.config/herdr-app/layouts
 link "$DOTFILES/config/herdr-app/layouts/hwork-main.json" ~/.config/herdr-app/layouts/hwork-main.json
+if command -v herdr >/dev/null 2>&1; then
+    herdr plugin install lmilojevicc/herdr-splits.nvim --yes
+fi
 link "$DOTFILES/config/nvim"                 ~/.config/nvim
 link "$DOTFILES/config/zsh/.p10k.zsh"        ~/.p10k.zsh
 mkdir -p ~/.config/ghostty

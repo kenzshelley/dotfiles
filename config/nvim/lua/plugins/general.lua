@@ -74,7 +74,7 @@ return {
   {
     "christoomey/vim-tmux-navigator",
     cond = function()
-      return not require("config.navigation").uses_native_splits()
+      return vim.env.HERDR_ENV ~= "1" and not require("config.navigation").uses_native_splits()
     end,
     cmd = {
       "TmuxNavigateLeft",
@@ -92,6 +92,24 @@ return {
       { "<C-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
       { "<C-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
     },
+  },
+
+  {
+    "lmilojevicc/herdr-splits.nvim",
+    lazy = false,
+    cond = function()
+      return vim.env.HERDR_ENV == "1"
+    end,
+    opts = { at_edge = "stop", nav_at_edge = "stop" },
+    config = function(_, opts)
+      local splits = require("herdr-splits")
+      splits.setup(opts)
+      vim.keymap.set("n", "<C-h>", splits.move_cursor_left, { desc = "Navigate left" })
+      vim.keymap.set("n", "<C-j>", splits.move_cursor_down, { desc = "Navigate down" })
+      vim.keymap.set("n", "<C-k>", splits.move_cursor_up, { desc = "Navigate up" })
+      vim.keymap.set("n", "<C-l>", splits.move_cursor_right, { desc = "Navigate right" })
+      vim.keymap.set("n", "<C-\\>", "<C-w>p", { desc = "Previous Neovim window" })
+    end,
   },
 
   {

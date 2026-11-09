@@ -41,6 +41,15 @@ source "$DEV_HOME/dotfiles/config/zsh/goose.sh"
 # fnm
 eval "$(fnm env --use-on-cd --shell zsh --log-level quiet)"
 
+# Keep fnm PATH changes from bypassing cmux's agent hooks.
+function codex() {
+  if [[ -n "${CMUX_SURFACE_ID:-}" && -x "${CMUX_CODEX_WRAPPER_SHIM:-}" ]]; then
+    "$CMUX_CODEX_WRAPPER_SHIM" "$@"
+  else
+    command codex "$@"
+  fi
+}
+
 # General
 export VISUAL='nvim'
 export EDITOR=$VISUAL

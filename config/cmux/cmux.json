@@ -1,4 +1,5 @@
 {
+  "paneBorderColor": "#B0B0B0",
   "$schema": "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
   "schemaVersion": 1,
   "shortcuts": {
@@ -33,7 +34,7 @@
       ],
       "equalizeSplits": [
         "ctrl+x",
-        "="
+        "e"
       ],
       "toggleTerminalCopyMode": [
         "ctrl+x",
@@ -58,7 +59,8 @@
     "workspaceAutoNaming": false
   },
   "app": {
-    "minimalMode": true,
+    "minimalMode": false,
+    "tabBarVisibility": "multiple-tabs",
     "reorderOnNotification": false,
     "iMessageMode": false
   },
@@ -70,5 +72,20 @@
         "timeoutSeconds": 120
       }
     ]
+  },
+  "actions": {
+    "toggleTabBars": {
+      "type": "setting",
+      "title": "Toggle Tab Bars",
+      "path": "app.tabBarVisibility",
+      "cycle": [
+        "always",
+        "multiple-tabs"
+      ],
+      "shortcut": [
+        "ctrl+x",
+        "t"
+      ]
+    }
   }
 }

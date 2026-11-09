@@ -259,3 +259,6 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 p10k finalize
 export PATH="$HOME/.local/bin:$PATH"
+
+# opencode
+export PATH=/Users/mackenzie/.opencode/bin:$PATH
